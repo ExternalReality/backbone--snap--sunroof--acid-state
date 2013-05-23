@@ -11,10 +11,13 @@ import Snap.Snaplet
 import Snap.Snaplet.Heist
 import Snap.Snaplet.Auth
 import Snap.Snaplet.Session
+------------------------------------------------------------------------------
+import Snaplet.PotionSoapClient
 
 ------------------------------------------------------------------------------
 data App = App
-    { _heist :: Snaplet (Heist App)
+    { _heist  :: Snaplet (Heist App)
+    , _client :: Snaplet PotionSoapClient
     }
 
 makeLenses ''App

@@ -1,0 +1,3 @@
+[submodule "potion-soap-client"]
+	path = potion-soap-client
+	url = git@bitbucket.org:eric_jones_/potion-soap-client.git

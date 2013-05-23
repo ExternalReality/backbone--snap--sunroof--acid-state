@@ -23,9 +23,11 @@ import           Snap.Snaplet.Auth.Backends.JsonFile
 import           Snap.Snaplet.Heist
 import           Snap.Snaplet.Session.Backends.CookieSession
 import           Snap.Util.FileServe
+import           Snaplet.PotionSoapClient
 ------------------------------------------------------------------------------
 import           Application
 import           Reagent
+------------------------------------------------------------------------------
 
 getR :: Handler App App ()
 getR = method GET $ do
@@ -41,11 +43,11 @@ routes = [
          , ("testR",     getR)
          ]
 
-
 ------------------------------------------------------------------------------
 -- | The application initializer.
 app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
-    h <- nestSnaplet "" heist $ heistInit "templates"  
+    h <- nestSnaplet "" heist $ heistInit "templates"
+    c <- nestSnaplet "Potion Soap Client" client potionSoapClientInitializer 
     addRoutes routes
-    return $ App h
+    return $ App h c
