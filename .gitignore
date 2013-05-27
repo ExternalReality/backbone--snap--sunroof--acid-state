@@ -8,6 +8,8 @@ cabal-dev
 
 #snap
 log
+snaplets
+snaplet-reload.sh
 
 #emacs
 *.*~
