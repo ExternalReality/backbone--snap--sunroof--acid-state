@@ -1,0 +1,5 @@
+<ul>
+  <% _.each(reagents, function(reagent){ %>
+   <li><%= reagent.get("id") %><%= reagent.get("name") %></li> 
+  <% }); %>
+</ul>

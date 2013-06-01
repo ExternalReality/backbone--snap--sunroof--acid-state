@@ -18,12 +18,10 @@ import Snap.Snaplet.Session
 ------------------------------------------------------------------------------
 import PotionSoap
 import ReagentQueries
-import Snaplet.PotionSoapClient
 
 ------------------------------------------------------------------------------
 data App = App
     { _heist  :: Snaplet (Heist App)
-    , _client :: Snaplet PotionSoapClient
     , _acid   :: Snaplet (Acid PotionSoapState)
     }
 

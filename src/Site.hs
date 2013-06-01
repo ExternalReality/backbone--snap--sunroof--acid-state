@@ -6,7 +6,6 @@ module Site
   ) where
 
 ------------------------------------------------------------------------------
---import Data.Acid hiding (query)
 import Data.Aeson
 import Data.ByteString.Char8 (ByteString, unpack)
 import Data.Maybe
@@ -19,12 +18,12 @@ import Application
 import Data.Text.Encoding
 import PotionSoap
 import Reagent
-import Snaplet.PotionSoapClient
 
 
 ------------------------------------------------------------------------------
 setResponseContentTypeToJSON =
   modifyResponse $ setContentType "application/json"
+
 
 ------------------------------------------------------------------------------
 allReagents :: Handler App App ()
@@ -56,17 +55,16 @@ newReagent = method POST $ do
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
-routes = [ (""                 , serveDirectory "static")
+routes = [ (""                 , serveDirectoryWith fancyDirectoryConfig "public")
          , ("api/reagents"     , allReagents <|> newReagent)
          , ("api/reagents/:id" , reagent) 
          ] 
-         
 
+         
 ------------------------------------------------------------------------------
 app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     h <- nestSnaplet "" heist $ heistInit "templates"
-    c <- nestSnaplet "PotionSoapClient" client potionSoapClientInitializer
     a <- nestSnaplet "" acid $ acidInit initialPotionSoapState
     addRoutes routes 
-    return $ App h c a
+    return $ App h a
