@@ -1,10 +1,10 @@
 define([ 'backbone'
-       , 'models/reagentModel' 
-       ], 
+       , 'models/reagentModel'
+       ],
 
-function(_, Backbone, ReagentNodel){
+function(_, Backbone, ReagentModel){
   var Reagents = Backbone.Collection.extend({
-    model: ProjectModel
+    model: ReagentModel
   });
 
   return Reagents;

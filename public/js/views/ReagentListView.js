@@ -1,19 +1,21 @@
 define([ 'backbone'
        , 'collections/reagents'
-       , 'text!/../templates/reagents.html'
+       , 'text!/../templates/reagents_template.html'
+       , 'bootstrap'
        ],
 
 function(Backbone, Reagents, ReagentsTemplate){
   var ReagentListView = Backbone.View.extend({
     initialize: function(){
-      this.collection = new Reagents();
-      this.collection.fetch();
+
+      //reagents is bound by the bootstrap script loaded in the above require.js list
+      this.collection = new Reagents(reagents);
       this.listenTo(this.collection, "change", this.render);
+
     },
 
-
     render: function() {
-      var template = _.template(ReagentsTemplate, { reagents : this.collection.models} );
+      var template = _.template(ReagentsTemplate, {reagents : this.collection.models} );
       this.$el.html(template);
       console.log("I renered");
       return this;
