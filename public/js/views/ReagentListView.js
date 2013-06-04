@@ -17,7 +17,6 @@ function(Backbone, Reagents, ReagentsTemplate){
     render: function() {
       var template = _.template(ReagentsTemplate, {reagents : this.collection.models} );
       this.$el.html(template);
-      console.log("I renered");
       return this;
     }
   });

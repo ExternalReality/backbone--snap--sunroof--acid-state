@@ -17,12 +17,14 @@ import Snap.Snaplet.Session
 
 ------------------------------------------------------------------------------
 import PotionSoap
-import ReagentQueries
+import Reagent.ReagentQueries
 
 ------------------------------------------------------------------------------
 data App = App
-    { _heist  :: Snaplet (Heist App)
-    , _acid   :: Snaplet (Acid PotionSoapState)
+    { _heist :: Snaplet (Heist App)
+    , _acid  :: Snaplet (Acid PotionSoapState)
+    , _sess  :: Snaplet SessionManager
+    , _auth  :: Snaplet (AuthManager App)
     }
 
 makeLenses ''App

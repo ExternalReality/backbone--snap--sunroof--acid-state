@@ -5,7 +5,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Reagent where
+module Reagent.Reagent where
 
 ------------------------------------------------------------------------------
 import Control.Lens (makeLenses)

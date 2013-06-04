@@ -5,12 +5,14 @@ cabal-dev
 *.hi
 *.chi
 *.chs.h
+TAGS
 
 #snap
 log
 snaplets
 snaplet-reload.sh
 state
+site_key.txt
 
 #emacs
 *.*~

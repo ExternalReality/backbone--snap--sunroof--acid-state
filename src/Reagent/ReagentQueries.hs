@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module ReagentQueries where
+module Reagent.ReagentQueries where
 
 ------------------------------------------------------------------------------
 import Control.Monad
@@ -12,7 +12,7 @@ import Data.Acid
 import Data.IxSet as IxSet
 ------------------------------------------------------------------------------
 import PotionSoap
-import Reagent
+import Reagent.Reagent
 
 ------------------------------------------------------------------------------
 newReagent :: ReagentName -> Update PotionSoapState ()
@@ -50,5 +50,3 @@ saveReagent :: Reagent -> Update PotionSoapState ()
 saveReagent reagent = do
   reagentState <- use reagents
   reagents .= IxSet.insert reagent reagentState
-              
-
