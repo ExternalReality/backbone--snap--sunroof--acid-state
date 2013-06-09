@@ -22,10 +22,10 @@ setResponseContentTypeToJSON =
 
 ------------------------------------------------------------------------------
 bootstrap :: Handler App App ()
-bootstrap = do
+bootstrap = method GET $ do
   reagents <- query AllReagents
   let reagentsInJsonFormat = encode $ reagents
-  modifyResponse $ setContentType "text/javascript; charset=UTF-8"
+  modifyResponse $ setContentType "application/javascript; charset=UTF-8"
   writeLBS $LBS.concat ["var reagents =", reagentsInJsonFormat, ";"]
 
 
@@ -40,9 +40,9 @@ allReagents = method GET $ do
 ------------------------------------------------------------------------------
 reagent :: Handler App App ()
 reagent = method GET $ do
-  maybeReagentId <- getParam "id"
-  let reagentId = read . unpack $ fromMaybe (error "this sucks") maybeReagentId
-  maybeReagent <- query $ ReagentById $ ReagentId reagentId
+  maybeReagentName <- getParam "name"
+  let reagentName = read . unpack $ fromMaybe (error "this sucks") maybeReagentName
+  maybeReagent <- query $ ReagentByName $ ReagentName reagentName
   let reagent = fromMaybe (error "hah") maybeReagent
   setResponseContentTypeToJSON
   writeLBS $ encode reagent
@@ -50,11 +50,12 @@ reagent = method GET $ do
 
 ------------------------------------------------------------------------------
 newReagent :: Handler App App ()
-newReagent = method POST $ do
-  maybeName <- getParam "name"
-  case maybeName of
-    (Just name) -> update $ NewReagent (ReagentName $ decodeUtf8 name)
-    (Nothing)   -> error $ "this fell through"
+newReagent = method PUT $ do
+  requestBody <- readRequestBody 1024 --1K byte
+  let maybeReagentName  = decode requestBody
+  case maybeReagentName of
+    (Just reagentName) -> update $ NewReagent reagentName
+    Nothing            -> error "this fell through"
 
 
 ------------------------------------------------------------------------------

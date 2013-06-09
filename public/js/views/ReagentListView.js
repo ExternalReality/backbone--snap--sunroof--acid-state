@@ -12,6 +12,9 @@ function(Backbone, Reagents, ReagentsTemplate){
       this.collection = new Reagents(reagents);
       this.listenTo(this.collection, "change", this.render);
 
+      var fetchOnInterval = function() { this.fetch() };
+      fetchOnInterval = _.bind(fetchOnInterval, this.collection);
+      setInterval(fetchOnInterval, 10000);
     },
 
     render: function() {

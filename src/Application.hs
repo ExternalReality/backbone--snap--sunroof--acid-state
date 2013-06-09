@@ -48,4 +48,5 @@ type AppHandler = Handler App App
 makeAcidic ''PotionSoapState ['allReagents
                              ,'newReagent
                              ,'reagentById
+                             ,'reagentByName
                              ]

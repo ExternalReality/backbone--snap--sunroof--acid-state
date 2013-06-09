@@ -10,9 +10,9 @@ import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Heist
-
 ------------------------------------------------------------------------------
 import           Application
+
 
 ------------------------------------------------------------------------------
 handleLogin :: Maybe T.Text -> Handler App (AuthManager App) ()

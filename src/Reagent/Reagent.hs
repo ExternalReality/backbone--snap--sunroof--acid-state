@@ -31,7 +31,7 @@ newtype ReagentName = ReagentName { _unReagentName :: Text }
     deriving (Eq, Ord, Data, Typeable, SafeCopy, Show)
 
 makeLenses ''ReagentName
-
+deriveFromJSON (const "name") ''ReagentName
 
 ------------------------------------------------------------------------------
 data Reagent = Reagent { _reagentId :: ReagentId
@@ -55,8 +55,3 @@ instance Indexable Reagent where
      empty = ixSet [ ixFun $ \reagent -> [ _reagentId reagent ]
                    , ixFun $ \reagent -> [ _name reagent ]
                    ]
-
-
-------------------------------------------------------------------------------
-succReagentId :: ReagentId -> ReagentId
-succReagentId (ReagentId n) = ReagentId $ n + 1

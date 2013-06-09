@@ -1,10 +1,13 @@
 define([ 'backbone'
        , 'views/ReagentListView'
+       , 'views/ReagentInputView'
        ],
 
-function(Backbone, ReagentListView){
+function(Backbone, ReagentListView, ReagentInputView){
   var ReagentRouter = Backbone.Router.extend({
-    routes: { 'reagents' : 'showReagents'}
+    routes: { 'reagents'     : 'showReagents'
+            , 'reagentInput' : 'inputReagent'
+            }
   });
 
   var initialize = function(){
@@ -15,6 +18,13 @@ function(Backbone, ReagentListView){
       var reagentListView = new ReagentListView();
       reagentListView.render().$el.appendTo(content);
     });
+
+    reagent_router.on('route:inputReagent', function(){
+      var content = $('#container');
+      var reagentInputView = new ReagentInputView();
+      reagentInputView.render().$el.appendTo(content);
+    });
+
   };
 
   return { initialize: initialize };

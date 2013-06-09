@@ -16,12 +16,16 @@ import           Snap.Snaplet.Session.Backends.CookieSession
 ------------------------------------------------------------------------------
 import           Application
 import qualified Authentication.Site as Auth
+import           Authentication.AcidStateBackend
 import qualified Reagent.Site as Reagent
 import           PotionSoap
 
+
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
-routes = [("", serveDirectoryWith fancyDirectoryConfig "public")]
+routes = [("",      serveDirectoryWith fancyDirectoryConfig "public")
+         ,("tests", serveFile "public/templates/tests.html")
+         ]
 
 
 ------------------------------------------------------------------------------
@@ -32,10 +36,10 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     s <- nestSnaplet "sess" sess $
          initCookieSessionManager "site_key.txt" "sess" (Just 3600)
     x <- nestSnaplet "auth" auth $
-         initJsonFileAuthManager defAuthSettings sess "users.json"
+         initAcidAuthManager defAuthSettings sess
 
     addRoutes routes
     addRoutes Auth.routes
     addRoutes Reagent.routes
-    addAuthSplices auth  
+    addAuthSplices auth
     return $ App h a s x

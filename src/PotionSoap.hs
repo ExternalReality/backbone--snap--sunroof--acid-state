@@ -22,5 +22,5 @@ makeLenses ''PotionSoapState
 ------------------------------------------------------------------------------
 initialPotionSoapState :: PotionSoapState
 initialPotionSoapState = PotionSoapState { _nextReagentId = ReagentId 0
-                                         , _reagents      = empty 
+                                         , _reagents      = empty
                                          }
