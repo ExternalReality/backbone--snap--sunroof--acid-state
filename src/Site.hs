@@ -23,8 +23,8 @@ import           PotionSoap
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
-routes = [("",      serveDirectoryWith fancyDirectoryConfig "public")
-         ,("tests", serveFile "public/templates/tests.html")
+routes = [(""      , serveDirectoryWith fancyDirectoryConfig "public")
+         ,("tests" , serveFile "public/templates/tests.html")
          ]
 
 
@@ -32,14 +32,14 @@ routes = [("",      serveDirectoryWith fancyDirectoryConfig "public")
 app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     h <- nestSnaplet "" heist $ heistInit "templates"
-    a <- nestSnaplet "" acid $ acidInit initialPotionSoapState
     s <- nestSnaplet "sess" sess $
          initCookieSessionManager "site_key.txt" "sess" (Just 3600)
     x <- nestSnaplet "auth" auth $
          initAcidAuthManager defAuthSettings sess
+    a <- nestSnaplet "" acid $ acidInit initialPotionSoapState
 
     addRoutes routes
     addRoutes Auth.routes
     addRoutes Reagent.routes
     addAuthSplices auth
-    return $ App h a s x
+    return $ App h s x a

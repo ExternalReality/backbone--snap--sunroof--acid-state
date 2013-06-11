@@ -1,7 +1,11 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Authentication.Site where
 
+import           Authentication.AcidStateBackend
+import           Control.Applicative ((<|>))
+import           Control.Monad.Trans
 import           Data.ByteString (ByteString)
 import           Data.Maybe
 import qualified Data.Text as T
@@ -12,6 +16,8 @@ import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Heist
 ------------------------------------------------------------------------------
 import           Application
+import           Authentication.AcidStateBackend
+import           Data.Acid
 
 
 ------------------------------------------------------------------------------
@@ -25,7 +31,7 @@ handleLogin authError = heistLocal (I.bindSplices errs) $ render "login"
 handleLoginSubmit :: Handler App (AuthManager App) ()
 handleLoginSubmit =
     loginUser "login" "password" Nothing
-              (\_ -> handleLogin err) (redirect "/login")
+              (\e -> handleLogin (Just . T.pack . show $ e)) (redirect "/#reagents")
   where
     err = Just "Unknown user or password"
 
@@ -36,8 +42,22 @@ handleLogout = logout >> redirect "/login"
 
 
 ------------------------------------------------------------------------------
+-- | Handle new user form submit
+handleNewUser :: Handler App (AuthManager App) ()
+handleNewUser = method GET handleForm <|> method POST handleFormSubmit
+  where
+    handleForm = render "new_user"
+    handleFormSubmit = do 
+    afu <- registerUser "login" "password" 
+    case afu of
+      Left error -> (liftIO $ print (show error)) >> redirect "/"
+      Right user    -> (liftIO $ print (show user)) >> redirect "/"
+
+
+------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("/login"        , with auth (handleLogin Nothing))
          , ("/login_submit" , with auth handleLoginSubmit)
          , ("/logout"       , with auth handleLogout)
+         , ("/new_user"     , with auth handleNewUser)
          ]

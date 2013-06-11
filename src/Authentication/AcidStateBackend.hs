@@ -1,3 +1,6 @@
+{-# LANGUAGE NoMonomorphismRestriction #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -17,6 +20,7 @@ import           Control.Monad.Reader (ask)
 import           Data.Acid
 import           Data.Aeson (Value, encode, decode)
 import           Data.Attoparsec.Number (Number)
+import           Control.Lens 
 import qualified Data.HashMap.Strict as H
 import           Data.Hashable (Hashable)
 import           Data.Maybe
@@ -34,8 +38,6 @@ import           System.IO.Error hiding (catch)
 import           Web.ClientSession
 import           Snap.Util.FileServe
 import           System.FilePath ((</>))
-------------------------------------------------------------------------------
-
 
 ------------------------------------------------------------------------------
 type UserLogin = Text
@@ -44,11 +46,13 @@ type RToken    = Text
 
 ------------------------------------------------------------------------------
 data UserStore = UserStore
-                   { users      :: H.HashMap UserId AuthUser
-                   , loginIndex :: H.HashMap UserLogin UserId
-                   , tokenIndex :: H.HashMap RToken UserId
-                   , uidCount   :: Int
+                   { _users      :: H.HashMap UserId AuthUser
+                   , _loginIndex :: H.HashMap UserLogin UserId
+                   , _tokenIndex :: H.HashMap RToken UserId
+                   , _nextUserId :: Int
                    } deriving (Typeable)
+
+makeLenses ''UserStore
 
 
 ------------------------------------------------------------------------------
@@ -85,31 +89,91 @@ emptyUS = UserStore H.empty H.empty H.empty 0
 
 
 ------------------------------------------------------------------------------
-saveU :: AuthUser
-      -> UTCTime
-      -> Update UserStore (Either AuthFailure AuthUser)
-saveU u now = do
-    UserStore us li ti n <- get
-    case H.lookup (userLogin u) li of
-      Just v | Just v /= userId u -> return $ Left DuplicateLogin
-      _  -> do
-          let uid = Just . fromMaybe ((UserId . pack . show) (n + 1)) $ userId u
-              old = userId u >>= flip H.lookup us
-              n'  = maybe (n+1) (const n)
-                  $ userId u >>= flip H.lookup us
-              u'  = u { userUpdatedAt = Just now, userId = uid }
-              us' = fromMaybe us $ H.insert <$> uid <*> pure u' <*> pure us
-              oldL = userLogin <$> old
-              oldT = userRememberToken =<< old
-              li' = fromMaybe li $ H.insert <$> pure (userLogin u) <*> uid
-                  <*> ( H.delete <$> oldL <*> pure li )
-              ti' = fromMaybe ti $ H.insert <$> userRememberToken u <*> uid
-                  <*> ( H.delete <$> oldT <*> pure ti )
-              new = UserStore us' li' ti' n'
-          put new
-          return $ Right u'
+saveAuthUser :: AuthUser 
+             -> UTCTime 
+             -> Update UserStore (Either AuthFailure AuthUser)
+saveAuthUser user utcTime = do
+  let authUserId = (userId user)
+  case authUserId of
+    Just id -> saveExistingUser user id utcTime
+    Nothing -> saveNewUser user utcTime
 
 
+------------------------------------------------------------------------------    
+saveNewUser :: AuthUser 
+            -> UTCTime 
+            -> Update UserStore (Either AuthFailure AuthUser)
+saveNewUser user currentTime = do
+  loginCache <- use loginIndex
+  if (isJust $ H.lookup (userLogin user) loginCache)
+    then return $ Left DuplicateLogin
+    else do 
+      uid <- liftM (UserId . pack . show) $ use nextUserId
+      incrementNextUserId
+      let user' = user { userUpdatedAt = Just currentTime, userId = Just uid }
+      updateUserCache user' uid
+      updateLoginCache (userLogin user') uid
+      updateTokenCache (userRememberToken user) uid
+      return $ Right user'
+       
+
+------------------------------------------------------------------------------
+saveExistingUser :: AuthUser 
+                 -> UserId
+                 -> UTCTime 
+                 -> Update UserStore (Either AuthFailure AuthUser)
+saveExistingUser user userId currentTime = do
+  loginCache <- use loginIndex
+  if (Just userId) /= (H.lookup (userLogin user) loginCache)
+     then return $ Left DuplicateLogin
+     else do
+       userCache  <- use users
+       loginCache <- use loginIndex
+       tokenCache <- use tokenIndex
+       
+       let oldUser = fromMaybe user $ H.lookup userId userCache
+       loginIndex .= H.delete (userLogin oldUser) loginCache
+       tokenIndex .= deleteIfExist (userRememberToken oldUser) tokenCache
+       
+       let user' = user { userUpdatedAt = Just currentTime }
+       updateUserCache user' userId
+       updateLoginCache (userLogin user') userId
+       updateTokenCache (userRememberToken user) userId
+       
+       return $ Right user
+
+
+------------------------------------------------------------------------------
+deleteIfExist :: (Hashable a, Eq a) => Maybe a -> H.HashMap a b -> H.HashMap a b
+deleteIfExist (Just val) hash = H.delete val hash
+deleteIfExist Nothing hash    = hash
+
+------------------------------------------------------------------------------
+updateUserCache :: (MonadState UserStore m) => AuthUser -> UserId ->  m ()
+updateUserCache user uid = do
+  userCache <- use users
+  users .= H.insert uid user userCache
+
+  
+------------------------------------------------------------------------------
+updateLoginCache :: (MonadState UserStore m) => Text-> UserId ->  m ()
+updateLoginCache login uid = do
+  loginCache <- use loginIndex
+  loginIndex .= H.insert login uid loginCache
+
+  
+------------------------------------------------------------------------------
+updateTokenCache :: (MonadState UserStore m) => Maybe Text -> UserId ->  m ()
+updateTokenCache Nothing uid = return ()
+updateTokenCache (Just token) uid = do
+  tokenCache <- use tokenIndex
+  tokenIndex .= H.insert token uid tokenCache
+
+  
+------------------------------------------------------------------------------
+incrementNextUserId = use nextUserId >>= \uid -> nextUserId .= uid + 1
+
+    
 ------------------------------------------------------------------------------
 byUserId :: UserId -> Query UserStore (Maybe AuthUser)
 byUserId uid = do
@@ -154,7 +218,7 @@ allLogins = do
 
 
 ------------------------------------------------------------------------------
-$(makeAcidic ''UserStore [ 'saveU
+$(makeAcidic ''UserStore [ 'saveAuthUser
                          , 'byUserId
                          , 'byLogin
                          , 'byRememberToken
@@ -174,9 +238,9 @@ instance IAuthBackend (AcidState UserStore) where
 
 ------------------------------------------------------------------------------
 acidSave :: AcidState UserStore -> AuthUser -> IO (Either AuthFailure AuthUser)
-acidSave acid u = do
+acidSave acid user = do
     now    <- getCurrentTime
-    update acid $ SaveU u now
+    update acid $ SaveAuthUser user now
 
 
 ------------------------------------------------------------------------------
@@ -210,7 +274,7 @@ initAcidAuthManager s lns =
 removeResourceLockOnUnload :: Initializer b v ()
 removeResourceLockOnUnload = do
   path <- getSnapletFilePath
-  let resourceLockPath =  path </> "open.lock"
+  let resourceLockPath = path </> "open.lock"
   onUnload $ removeIfExists resourceLockPath
 
       

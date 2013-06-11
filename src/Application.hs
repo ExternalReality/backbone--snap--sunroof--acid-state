@@ -22,9 +22,9 @@ import Reagent.ReagentQueries
 ------------------------------------------------------------------------------
 data App = App
     { _heist :: Snaplet (Heist App)
-    , _acid  :: Snaplet (Acid PotionSoapState)
     , _sess  :: Snaplet SessionManager
     , _auth  :: Snaplet (AuthManager App)
+    , _acid  :: Snaplet (Acid PotionSoapState)
     }
 
 makeLenses ''App
