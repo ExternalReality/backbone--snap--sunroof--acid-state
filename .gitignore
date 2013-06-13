@@ -9,7 +9,8 @@ TAGS
 
 #snap
 log
-snaplets
+snaplets/*
+!snaplets/heist/
 snaplet-reload.sh
 state
 site_key.txt
