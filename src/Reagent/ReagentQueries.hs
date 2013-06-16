@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE RecordWildCards  #-}
 
 module Reagent.ReagentQueries where
 
@@ -16,8 +16,8 @@ import Reagent.Reagent
 
 ------------------------------------------------------------------------------
 newReagent :: ReagentName -> Update PotionSoapState ()
-newReagent rn = do
-  reagent <- createReagent rn
+newReagent reagentName = do
+  reagent <- createReagent reagentName
   incrementNextReagentId
   saveReagent reagent
 
@@ -33,7 +33,7 @@ reagentById reagentId = do
   reagentState <- view reagents
   return . getOne $ reagentState @= reagentId
 
-  
+
 ------------------------------------------------------------------------------
 reagentByName :: ReagentName -> Query PotionSoapState (Maybe Reagent)
 reagentByName reagentName = do
