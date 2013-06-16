@@ -1,7 +1,8 @@
 require.config({
-  paths: { jquery: 'lib/jquery/jquery-2.0.1.min'
+  paths: { jquery:     'lib/jquery/jquery-2.0.1.min'
+         , jqueryui:   'lib/jquery-ui/jquery-ui.min'
          , underscore: 'lib/underscore/underscore-min'
-         , backbone: 'lib/backbone/backbone-min'
+         , backbone:   'lib/backbone/backbone-min'
          },
 
   shim: {
