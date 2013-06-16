@@ -9,19 +9,15 @@
 module Authentication.AcidStateBackend
         where
 
-import           Control.Error
 import           Control.Exception hiding (Handler)
-import           Control.Monad.CatchIO (throw)
-import           Control.Monad.Reader (ask)
 import           Data.Acid
-import           Data.Aeson (Value, encode, decode)
+import           Data.Aeson (Value)
 import           Data.Attoparsec.Number (Number)
 import           Control.Lens
 import qualified Data.HashMap.Strict as H
 import           Data.Hashable (Hashable)
 import           Data.Maybe
 import           Data.SafeCopy
-import qualified Data.Serialize as S (get, put)
 import           Data.Text (Text, pack)
 import           Data.Time
 import           Data.Typeable (Typeable)
@@ -32,7 +28,6 @@ import           Snap.Snaplet.Session
 import           System.Directory
 import           System.IO.Error hiding (catch)
 import           Web.ClientSession
-import           Snap.Util.FileServe
 import           System.FilePath ((</>))
 
 ------------------------------------------------------------------------------
@@ -162,21 +157,21 @@ updateTokenCache Nothing _        = return ()
 ------------------------------------------------------------------------------
 byUserId :: UserId -> Query UserStore (Maybe AuthUser)
 byUserId uid = do
-    UserStore us _ _ _ <- ask
+    us <- view users
     return $ H.lookup uid us
 
 
 ------------------------------------------------------------------------------
 byLogin :: UserLogin -> Query UserStore (Maybe AuthUser)
 byLogin l = do
-    UserStore _ li _ _ <- ask
+    li <- view loginIndex
     maybe (return Nothing) byUserId $ H.lookup l li
 
 
 ------------------------------------------------------------------------------
 byRememberToken :: RToken -> Query UserStore (Maybe AuthUser)
 byRememberToken tok = do
-    UserStore _ _ ti _<- ask
+    ti <- view tokenIndex
     maybe (return Nothing) byUserId $ H.lookup tok ti
 
 
@@ -198,7 +193,7 @@ destroyU au =
 ------------------------------------------------------------------------------
 allLogins :: Query UserStore [UserLogin]
 allLogins = do
-    UserStore _ li _ _ <- ask
+    li <- view loginIndex
     return $ H.keys li
 
 
