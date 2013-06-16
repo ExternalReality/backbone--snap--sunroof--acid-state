@@ -1,17 +1,13 @@
-{-# LANGUAGE NoMonomorphismRestriction #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE DoAndIfThenElse #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
 
 module Authentication.AcidStateBackend
-         ( initAcidAuthManager
-         , getAllLogins
-         ) where
+        where
 
 import           Control.Error
 import           Control.Exception hiding (Handler)
@@ -20,7 +16,7 @@ import           Control.Monad.Reader (ask)
 import           Data.Acid
 import           Data.Aeson (Value, encode, decode)
 import           Data.Attoparsec.Number (Number)
-import           Control.Lens 
+import           Control.Lens
 import qualified Data.HashMap.Strict as H
 import           Data.Hashable (Hashable)
 import           Data.Maybe
@@ -89,91 +85,80 @@ emptyUS = UserStore H.empty H.empty H.empty 0
 
 
 ------------------------------------------------------------------------------
-saveAuthUser :: AuthUser 
-             -> UTCTime 
+saveAuthUser :: AuthUser
+             -> UTCTime
              -> Update UserStore (Either AuthFailure AuthUser)
 saveAuthUser user utcTime = do
-  let authUserId = (userId user)
+  let authUserId = userId user
   case authUserId of
     Just id -> saveExistingUser user id utcTime
     Nothing -> saveNewUser user utcTime
 
 
-------------------------------------------------------------------------------    
-saveNewUser :: AuthUser 
-            -> UTCTime 
+------------------------------------------------------------------------------
+saveNewUser :: AuthUser
+            -> UTCTime
             -> Update UserStore (Either AuthFailure AuthUser)
 saveNewUser user currentTime = do
   loginCache <- use loginIndex
-  if (isJust $ H.lookup (userLogin user) loginCache)
+  if isJust $ H.lookup (userLogin user) loginCache
     then return $ Left DuplicateLogin
-    else do 
+    else do
       uid <- liftM (UserId . pack . show) $ use nextUserId
-      incrementNextUserId
+      nextUserId += 1
       let user' = user { userUpdatedAt = Just currentTime, userId = Just uid }
       updateUserCache user' uid
       updateLoginCache (userLogin user') uid
       updateTokenCache (userRememberToken user) uid
       return $ Right user'
-       
+
 
 ------------------------------------------------------------------------------
-saveExistingUser :: AuthUser 
+saveExistingUser :: AuthUser
                  -> UserId
-                 -> UTCTime 
+                 -> UTCTime
                  -> Update UserStore (Either AuthFailure AuthUser)
 saveExistingUser user userId currentTime = do
   loginCache <- use loginIndex
-  if (Just userId) /= (H.lookup (userLogin user) loginCache)
+  if Just userId /= H.lookup (userLogin user) loginCache
      then return $ Left DuplicateLogin
      else do
        userCache  <- use users
-       loginCache <- use loginIndex
-       tokenCache <- use tokenIndex
-       
+
        let oldUser = fromMaybe user $ H.lookup userId userCache
-       loginIndex .= H.delete (userLogin oldUser) loginCache
-       tokenIndex .= deleteIfExist (userRememberToken oldUser) tokenCache
-       
+       loginIndex %= H.delete (userLogin oldUser)
+       tokenIndex %= deleteIfJust (userRememberToken oldUser)
+
        let user' = user { userUpdatedAt = Just currentTime }
        updateUserCache user' userId
        updateLoginCache (userLogin user') userId
        updateTokenCache (userRememberToken user) userId
-       
+
        return $ Right user
 
 
 ------------------------------------------------------------------------------
-deleteIfExist :: (Hashable a, Eq a) => Maybe a -> H.HashMap a b -> H.HashMap a b
-deleteIfExist (Just val) hash = H.delete val hash
-deleteIfExist Nothing hash    = hash
+deleteIfJust :: (Hashable a, Eq a) => Maybe a -> H.HashMap a b -> H.HashMap a b
+deleteIfJust (Just val) hash = H.delete val hash
+deleteIfJust Nothing hash    = hash
+
 
 ------------------------------------------------------------------------------
 updateUserCache :: (MonadState UserStore m) => AuthUser -> UserId ->  m ()
-updateUserCache user uid = do
-  userCache <- use users
-  users .= H.insert uid user userCache
+updateUserCache user uid = users %= H.insert uid user
 
-  
+
 ------------------------------------------------------------------------------
 updateLoginCache :: (MonadState UserStore m) => Text-> UserId ->  m ()
-updateLoginCache login uid = do
-  loginCache <- use loginIndex
-  loginIndex .= H.insert login uid loginCache
+updateLoginCache login uid = loginIndex %= H.insert login uid
 
-  
+
 ------------------------------------------------------------------------------
 updateTokenCache :: (MonadState UserStore m) => Maybe Text -> UserId ->  m ()
-updateTokenCache Nothing uid = return ()
-updateTokenCache (Just token) uid = do
-  tokenCache <- use tokenIndex
-  tokenIndex .= H.insert token uid tokenCache
+updateTokenCache (Just token) uid = tokenIndex %= H.insert token uid
+updateTokenCache Nothing _        = return ()
 
-  
-------------------------------------------------------------------------------
-incrementNextUserId = use nextUserId >>= \uid -> nextUserId .= uid + 1
 
-    
 ------------------------------------------------------------------------------
 byUserId :: UserId -> Query UserStore (Maybe AuthUser)
 byUserId uid = do
@@ -237,10 +222,12 @@ instance IAuthBackend (AcidState UserStore) where
 
 
 ------------------------------------------------------------------------------
-acidSave :: AcidState UserStore -> AuthUser -> IO (Either AuthFailure AuthUser)
+acidSave :: AcidState UserStore 
+         -> AuthUser 
+         -> IO (Either AuthFailure AuthUser)
 acidSave acid user = do
-    now    <- getCurrentTime
-    update acid $ SaveAuthUser user now
+    currentTime <- getCurrentTime
+    update acid $ SaveAuthUser user currentTime
 
 
 ------------------------------------------------------------------------------
@@ -250,7 +237,7 @@ initAcidAuthManager :: AuthSettings
 initAcidAuthManager s lns =
     makeSnaplet
       "AcidStateAuthManager"
-      "A snaplet providing user authentication using an Acid State backend"
+      "A snaplet providing user authentication using an Acid State back-end"
       Nothing $ do
           removeResourceLockOnUnload
           rng  <- liftIO mkRNG
@@ -268,7 +255,7 @@ initAcidAuthManager s lns =
                    , lockout               = asLockout s
                    , randomNumberGenerator = rng
                    }
-                   
+
 
 ------------------------------------------------------------------------------
 removeResourceLockOnUnload :: Initializer b v ()
@@ -277,7 +264,7 @@ removeResourceLockOnUnload = do
   let resourceLockPath = path </> "open.lock"
   onUnload $ removeIfExists resourceLockPath
 
-      
+
 ------------------------------------------------------------------------------
 removeIfExists :: FilePath -> IO ()
 removeIfExists fileName = removeFile fileName `catch` handleExists
@@ -285,7 +272,7 @@ removeIfExists fileName = removeFile fileName `catch` handleExists
           | isDoesNotExistError e = return ()
           | otherwise = throwIO e
 
-                   
+
 ------------------------------------------------------------------------------
 getAllLogins :: AcidState UserStore -> Handler b (AuthManager v) [Text]
 getAllLogins acid = liftIO $ query acid AllLogins
