@@ -47,8 +47,11 @@ Executable potion-soap
     unordered-containers      == 0.2.*,
     hashable                  == 1.2.*,
     cereal                    == 0.3.*,
-    xmlhtml                   >= 0.1
+    xmlhtml                   >= 0.1,
 
+    -- haskell mode needs these for testing
+    hspec                     == 1.5.*,
+    HUnit                     == 1.2.5.*
   if flag(old-base)
     build-depends:
       base                      >= 4        && < 4.4,
@@ -61,7 +64,7 @@ Executable potion-soap
   if flag(development)
     build-depends:
       snap-loader-dynamic == 0.10.*
-    cpp-options: -DDEVELOPMENT  
+    cpp-options: -DDEVELOPMENT
     ghc-options: -threaded -w
   else
     if impl(ghc >= 6.12.0)
@@ -70,3 +73,14 @@ Executable potion-soap
     else
       ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
                    -fno-warn-orphans
+
+test-suite potion-soap-tests
+  type:           exitcode-stdio-1.0
+  hs-source-dirs:
+     tests,
+     src
+  main-is:        PotionSoapTests.hs
+  build-depends:
+     base                      >= 4.4      && < 5,
+     hspec                     == 1.5.*,
+     HUnit                     == 1.2.5.*
