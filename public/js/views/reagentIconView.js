@@ -16,9 +16,9 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
       var template = _.template(ReagentIconTemplate, {reagentName : this.model.get("name")} );
       this.$el.html(template);
       this.$el.draggable();
+      this.$el.addClass("reagent");
       return this;
     }
-
   });
 
   return ReagentIconView;
