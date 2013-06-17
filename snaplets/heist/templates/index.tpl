@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>Potion Soap</title>
+    <link rel="stylesheet" type="text/css" href="/reagent-icon.css" />
     <script data-main="js/main" src="js/lib/require/require.js"></script>
 </head>
 <body>

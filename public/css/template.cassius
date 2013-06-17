@@ -1,0 +1,3 @@
+.reagent-icon 
+    display: inline-block
+    cursor:  pointer

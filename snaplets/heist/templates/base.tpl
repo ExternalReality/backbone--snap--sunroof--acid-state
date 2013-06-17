@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Snap web server</title>
+    <title>Potion Soap</title>
   </head>
   <body>
     <div id="content">
