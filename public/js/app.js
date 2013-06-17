@@ -1,7 +1,7 @@
 define([ 'jquery'
        , 'underscore'
        , 'backbone'
-       , 'routers/reagentRouter'
+       , 'routers/reagent-router'
        ],
 
 function($, _, Backbone, ReagentRouter){

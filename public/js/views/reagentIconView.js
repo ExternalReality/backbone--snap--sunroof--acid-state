@@ -1,5 +1,5 @@
 define([ 'backbone'
-       , 'models/reagentModel'
+       , 'models/reagent-model'
        , 'text!/../templates/reagent_icon_template.html'
        , 'bootstrap'
        , 'jqueryui'
@@ -15,8 +15,8 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
     render: function() {
       var template = _.template(ReagentIconTemplate, {reagentName : this.model.get("name")} );
       this.$el.html(template);
-      this.$el.draggable();
-      this.$el.addClass("reagent");
+      this.setElement(template);
+      this.$('.reagent-icon').draggable();
       return this;
     }
   });

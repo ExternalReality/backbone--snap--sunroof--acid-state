@@ -1,5 +1,5 @@
 define([ 'backbone'
-       , 'models/reagentModel'
+       , 'models/reagent-model'
        ],
 
 function(_, Backbone, ReagentModel){
