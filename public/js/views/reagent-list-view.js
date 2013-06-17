@@ -33,7 +33,7 @@ function(Backbone, Reagents, ReagentIconView, ReagentsTemplate){
     renderReagentIcons : function(model) {
       var reagentIconView = new ReagentIconView({model : model});
       var reagentIcon = reagentIconView.render();
-      this.$el.append(reagentIcon.el);
+      this.$('ul').append(reagentIcon.el);
 
       return this;
     }

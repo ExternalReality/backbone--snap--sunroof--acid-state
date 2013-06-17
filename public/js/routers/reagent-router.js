@@ -1,6 +1,6 @@
 define([ 'backbone'
-       , 'views/ReagentListView'
-       , 'views/ReagentInputView'
+       , 'views/reagent-list-view'
+       , 'views/reagent-input-view'
        ],
 
 function(Backbone, ReagentListView, ReagentInputView){

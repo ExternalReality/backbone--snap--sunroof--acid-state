@@ -1,5 +1,5 @@
 define([ 'backbone'
-       , 'models/reagentModel'
+       , 'models/reagent-model'
        , 'text!/../templates/reagent_template.html'
        ],
 
