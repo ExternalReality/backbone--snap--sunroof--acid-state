@@ -12,8 +12,14 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
       this.model = this.options.model;
     },
 
+    templateBindings: function (){
+      return {
+        reagentName : this.model.get("name")
+      };
+    },
+
     render: function() {
-      var template = _.template(ReagentIconTemplate, {reagentName : this.model.get("name")} );
+      var template = _.template(ReagentIconTemplate, this.templateBindings() );
       this.$el.html(template);
       this.setElement(template);
       this.$('.reagent-icon').draggable();
