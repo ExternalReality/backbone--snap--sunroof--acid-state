@@ -16,13 +16,13 @@ function(Backbone, Reagent, ReagentForm){
 
     bindInputs : function(evt){
       var target = $(evt.currentTarget);
-      data = {};
+      var data = {};
       data[target.attr('name')] = target.val();
       this.model.set(data);
     },
 
     submit : function(){
-      this.model.save()
+      this.model.save();
     },
 
     render: function() {

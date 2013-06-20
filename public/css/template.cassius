@@ -1,3 +1,8 @@
 .reagent-icon 
-    display: inline-block
-    cursor:  pointer
+    display:      inline-block
+    cursor:       pointer
+    width: 50px;	  
+    height: 20px;
+    padding: 80px 55px 80px 55px;
+    border-style: dashed;
+    text-align: left;

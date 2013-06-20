@@ -1,26 +1,31 @@
 define([ 'backbone'
-       , 'views/reagent-list-view'
+       , 'views/laboratory-view'
        , 'views/reagent-input-view'
        ],
 
-function(Backbone, ReagentListView, ReagentInputView){
+function( Backbone 
+	, LaboratoryView
+	, ReagentInputView
+	){
+    
   var ReagentRouter = Backbone.Router.extend({
-    routes: { 'reagents'     : 'showReagents'
-            , 'reagentInput' : 'inputReagent'
-            }
+  routes: { 'reagents'     : 'showReagents'
+          , 'reagentInput' : 'inputReagent'
+          }
   });
 
   var initialize = function(){
     var reagent_router = new ReagentRouter();
 
     reagent_router.on('route:showReagents', function(){
-      var content = $('#container');
-      var reagentListView = new ReagentListView();
-      reagentListView.render().$el.appendTo(content);
+      var content = $('#content');
+      var laboratoryView = new LaboratoryView();
+      var laboratory = laboratoryView.render().el;
+      content.append(laboratory);
     });
 
     reagent_router.on('route:inputReagent', function(){
-      var content = $('#container');
+      var content = $('#content');
       var reagentInputView = new ReagentInputView();
       reagentInputView.render().$el.appendTo(content);
     });
