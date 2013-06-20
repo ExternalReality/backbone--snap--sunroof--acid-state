@@ -1,10 +1,8 @@
-define([ 'jquery'
-       , 'underscore'
-       , 'backbone'
+define([ 'backbone'
        , 'routers/reagent-router'
        ],
 
-function($, _, Backbone, ReagentRouter){
+function(Backbone, ReagentRouter){
 
   var initialize = function(){
     ReagentRouter.initialize();
