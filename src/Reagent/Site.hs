@@ -51,7 +51,7 @@ reagent = method GET $ do
 ------------------------------------------------------------------------------
 newReagent :: Handler App App ()
 newReagent = method PUT $ do
-  requestBody <- readRequestBody 1024 --1K byte
+  requestBody <- readRequestBody 1024 --1K byte problably gonna need more than this soon
   let maybeReagentName  = decode requestBody
   case maybeReagentName of
     (Just reagentName) -> update $ NewReagent reagentName
