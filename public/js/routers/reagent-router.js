@@ -9,15 +9,16 @@ function( Backbone
 	){
     
   var ReagentRouter = Backbone.Router.extend({
-  routes: { 'reagents'     : 'showReagents'
+  routes: { 'laboratory'   : 'laboratory'
           , 'reagentInput' : 'inputReagent'
           }
   });
 
+
   var initialize = function(){
     var reagent_router = new ReagentRouter();
 
-    reagent_router.on('route:showReagents', function(){
+    reagent_router.on('route:laboratory', function(){
       var content = $('#content');
       var laboratoryView = new LaboratoryView();
       var laboratory = laboratoryView.render().el;

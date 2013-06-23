@@ -2,7 +2,7 @@ define([ 'backbone'
        , 'models/reagent-model'
        , 'text!/../templates/reagent_icon_template.html'
        , 'bootstrap'
-       , 'jqueryui'
+       , 'jquery.ui'
        ],
 
 function(Backbone, ReagentModel, ReagentIconTemplate){

@@ -1,6 +1,6 @@
 define([ 'backbone'
        , 'text!/../templates/potion-bottle.html'
-       , 'jqueryui'
+       , 'jquery.ui'
        ],
 
 function(Backbone, PotionBottleTemplate){
