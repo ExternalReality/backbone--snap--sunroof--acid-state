@@ -9,16 +9,16 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
   var ReagentIconView = Backbone.View.extend({
 
     initialize: function(){
-      this.model = this.options.model;
+      this.model     = this.options.model;
     },
 
     templateBindings: function (){
-      return {
-        reagentName : this.model.get("name")
-      };
+      return { reagentName : this.model.get("name")
+	     , imageUrl    : this.model.get("imageUrl")
+             };
     },
 
-    render: function() {
+    render: function(){
       var template = _.template(ReagentIconTemplate, this.templateBindings() );
       this.$el.html(template);
       this.setElement(template);

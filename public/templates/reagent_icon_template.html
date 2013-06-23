@@ -1,1 +1,8 @@
-<td><span class="reagent-icon"><%= reagentName %></span></td>
+<td>
+<% if (typeof(imageUrl) != "undefined") { %>
+    <img class="reagent-icon" src=<%= imageUrl %> alt=<% reagentName %>></img>
+<% } else { %>
+    <span class="reagent-icon"><%= reagentName %></span>
+<% } %>
+</td>
+

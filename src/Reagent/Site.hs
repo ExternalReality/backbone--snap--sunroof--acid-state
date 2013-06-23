@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Reagent.Site where
@@ -51,11 +52,11 @@ reagent = method GET $ do
 ------------------------------------------------------------------------------
 newReagent :: Handler App App ()
 newReagent = method PUT $ do
-  requestBody <- readRequestBody 1024 --1K byte problably gonna need more than this soon
-  let maybeReagentName  = decode requestBody
-  case maybeReagentName of
-    (Just reagentName) -> update $ NewReagent reagentName
-    Nothing            -> error "this fell through"
+  requestBody <- readRequestBody 2048 --2K byte problably gonna need more than this soon
+  let maybeReagent = decode requestBody
+  case maybeReagent of
+    (Just (Reagent {..})) -> update $ NewReagent _name _imageUrl
+    Nothing               -> error "this fell through"
 
 
 ------------------------------------------------------------------------------
