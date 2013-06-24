@@ -3,8 +3,7 @@ define([ 'backbone'
 
 function(Backbone){
   var ReagentModel = Backbone.Model.extend({
-    urlRoot : "/api/reagents",
-    idAttribute: "name"
+    urlRoot : "/api/reagents"
   });
 
   return ReagentModel;

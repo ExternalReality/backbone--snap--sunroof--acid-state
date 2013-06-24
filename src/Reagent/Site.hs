@@ -39,29 +39,25 @@ allReagents = method GET $ do
 
 
 ------------------------------------------------------------------------------
-reagent :: Handler App App ()
-reagent = method GET $ do
-  maybeReagentName <- getParam "name"
-  let reagentName = read . unpack $ fromMaybe (error "this sucks") maybeReagentName
-  maybeReagent <- query $ ReagentByName $ ReagentName reagentName
-  let reagent = fromMaybe (error "hah") maybeReagent
-  setResponseContentTypeToJSON
-  writeLBS $ encode reagent
-
-
-------------------------------------------------------------------------------
 newReagent :: Handler App App ()
-newReagent = method PUT $ do
-  requestBody <- readRequestBody 2048 --2K byte problably gonna need more than this soon
+newReagent = method POST $ do
+  requestBody <- readRequestBody 2048
   let maybeReagent = decode requestBody
   case maybeReagent of
-    (Just reagent ) -> update $ NewReagent reagent
+    (Just reagent ) -> makeNewReagent reagent 
     Nothing         -> error "this fell through"
+
+  where
+    makeNewReagent reagent = do 
+      result <- update $ NewReagent reagent
+      if result
+        then modifyResponse $
+              setResponseStatus 409 "Conflict: Resource already exists."
+        else return ()  
 
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("api/reagents"     , allReagents <|> newReagent)
-         , ("api/reagents/:id" , reagent)
          , ("js/bootstrap.js"  , bootstrap)
          ]

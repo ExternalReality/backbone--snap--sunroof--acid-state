@@ -4,23 +4,31 @@
 module Reagent.ReagentQueries where
 
 ------------------------------------------------------------------------------
-import Control.Monad
 import Control.Lens
+import Control.Monad
 import Control.Monad.Reader (ask)
 import Control.Monad.State
 import Data.Acid
 import Data.IxSet as IxSet
+import Data.Maybe (isJust)
 ------------------------------------------------------------------------------
 import PotionSoap
 import Reagent.Reagent
 
 ------------------------------------------------------------------------------
-newReagent :: Reagent -> Update PotionSoapState ()
+newReagent :: Reagent -> Update PotionSoapState Bool
 newReagent reagent = do
-  reagent <- createReagent reagent
-  incrementNextReagentId
-  saveReagent reagent
-
+  reagentState <- use reagents   
+  let reagentNameExists = isJust . getOne $reagentState @= (_name reagent)
+   
+  if reagentNameExists
+    then return True
+    else do 
+         reagent' <- createReagent reagent
+         incrementNextReagentId
+         saveReagent reagent'
+         return False
+               
 
 ------------------------------------------------------------------------------
 allReagents :: Query PotionSoapState [Reagent]

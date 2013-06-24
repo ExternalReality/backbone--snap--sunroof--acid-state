@@ -10,7 +10,7 @@ function(Backbone, Reagent, ReagentForm){
             , 'change input[name=imageUrl]'            : "bindInputs"
             , 'change textarea[name=shortDescription]' : "bindInputs"
             , 'change textarea[name=longDescription]'  : "bindInputs"
-            , 'click input[type=submit]'               : "submit"
+            , 'click input[type=button]'               : "submit"
             },
 
     initialize : function(){
