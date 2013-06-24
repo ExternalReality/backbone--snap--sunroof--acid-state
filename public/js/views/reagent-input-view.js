@@ -28,7 +28,7 @@ function(Backbone, Reagent, ReagentForm){
       this.model.save();
     },
 
-    render: function() {
+    render : function() {
       var template = _.template(ReagentForm);
       this.$el.html(template);
       return this;
