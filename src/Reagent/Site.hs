@@ -55,8 +55,8 @@ newReagent = method PUT $ do
   requestBody <- readRequestBody 2048 --2K byte problably gonna need more than this soon
   let maybeReagent = decode requestBody
   case maybeReagent of
-    (Just (Reagent {..})) -> update $ NewReagent _name _imageUrl
-    Nothing               -> error "this fell through"
+    (Just reagent ) -> update $ NewReagent reagent
+    Nothing         -> error "this fell through"
 
 
 ------------------------------------------------------------------------------

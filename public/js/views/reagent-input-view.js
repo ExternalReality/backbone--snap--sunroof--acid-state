@@ -6,10 +6,12 @@ define([ 'backbone'
 function(Backbone, Reagent, ReagentForm){
 
   var ReagentInputView = Backbone.View.extend({
-    events: { 'change input[name=name]'          : "bindInputs"
-             , 'change input[name=imageUrl]' : "bindInputs"
-             , 'click input[type=submit]'	 : "submit"
-             },
+    events: { 'change input[name=name]'                : "bindInputs"
+            , 'change input[name=imageUrl]'            : "bindInputs"
+            , 'change textarea[name=shortDescription]' : "bindInputs"
+            , 'change textarea[name=longDescription]'  : "bindInputs"
+            , 'click input[type=submit]'               : "submit"
+            },
 
     initialize : function(){
       this.model = new Reagent();

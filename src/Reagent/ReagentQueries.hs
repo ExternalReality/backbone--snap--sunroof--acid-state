@@ -15,9 +15,9 @@ import PotionSoap
 import Reagent.Reagent
 
 ------------------------------------------------------------------------------
-newReagent :: ReagentName -> ImageUrl -> Update PotionSoapState ()
-newReagent reagentName imageUrl = do
-  reagent <- createReagent reagentName imageUrl
+newReagent :: Reagent -> Update PotionSoapState ()
+newReagent reagent = do
+  reagent <- createReagent reagent
   incrementNextReagentId
   saveReagent reagent
 
@@ -48,12 +48,11 @@ incrementNextReagentId = do
 
 
 ------------------------------------------------------------------------------
-createReagent :: (MonadState PotionSoapState m) => ReagentName 
-                                                -> ImageUrl 
+createReagent :: (MonadState PotionSoapState m) => Reagent                                                
                                                 -> m Reagent
-createReagent name url = do
-  id <- use nextReagentId
-  return $ Reagent (Just id) name url 
+createReagent reagent = do
+  id <- (use nextReagentId)
+  return $ reagent { _reagentId = Just id }
 
                                   
 ------------------------------------------------------------------------------
