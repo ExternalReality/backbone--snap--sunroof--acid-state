@@ -14,7 +14,6 @@ function( Backbone
           }
   });
 
-
   var initialize = function(){
     var reagent_router = new ReagentRouter();
 

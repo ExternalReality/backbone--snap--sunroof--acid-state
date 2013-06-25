@@ -20,7 +20,7 @@ newReagent :: Reagent -> Update PotionSoapState Bool
 newReagent reagent = do
   reagentState <- use reagents   
   let reagentNameExists = isJust . getOne $reagentState @= (_name reagent)
-   
+     
   if reagentNameExists
     then return True
     else do 
@@ -29,6 +29,16 @@ newReagent reagent = do
          saveReagent reagent'
          return False
                
+------------------------------------------------------------------------------
+updateReagent :: Reagent -> Update PotionSoapState ()
+updateReagent reagent = 
+  maybe (return ()) updateReagent' ( _reagentId reagent )
+  
+  where   
+   updateReagent' = 
+     return $ reagents %= updateIx (_reagentId reagent) reagent 
+
+                
 
 ------------------------------------------------------------------------------
 allReagents :: Query PotionSoapState [Reagent]

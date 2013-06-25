@@ -13,7 +13,7 @@ function( Backbone
   var LaboratoryView = Backbone.View.extend({
 
     render: function() {
-
+       
       var template = _.template(LaboratoryTemplate, {});
       this.$el.html(template);
       this.setElement(template);

@@ -22,11 +22,9 @@ function( Backbone
       var fetchOnInterval = function() { this.collection.fetch(); };
       fetchOnInterval = _.bind(fetchOnInterval, this);
       self.setInterval(fetchOnInterval, 10000);
-      window.x = this.intersperseAfterPos;
     },
 
     render: function() {
-
       var template = _.template(ReagentsTemplate,{});
       this.$el.html(template);
       this.setElement(template);

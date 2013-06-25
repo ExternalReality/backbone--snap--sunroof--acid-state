@@ -39,6 +39,15 @@ allReagents = method GET $ do
 
 
 ------------------------------------------------------------------------------
+updateReagent :: Handler App App ()
+updateReagent = method PUT $ do
+  requestBody <- readRequestBody 2048
+  case decode requestBody of 
+    (Just reagent) -> update $ UpdateReagent reagent
+    Nothing   -> error "this fell through"
+    
+                       
+------------------------------------------------------------------------------
 newReagent :: Handler App App ()
 newReagent = method POST $ do
   requestBody <- readRequestBody 2048
@@ -59,5 +68,6 @@ newReagent = method POST $ do
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("api/reagents"     , allReagents <|> newReagent)
+         , ("api/reagents/:id" , updateReagent)
          , ("js/bootstrap.js"  , bootstrap)
          ]

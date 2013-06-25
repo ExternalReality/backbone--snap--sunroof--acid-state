@@ -31,7 +31,7 @@ handleLogin authError = heistLocal (I.bindSplices errs) $ render "login"
 handleLoginSubmit :: Handler App (AuthManager App) ()
 handleLoginSubmit =
     loginUser "login" "password" Nothing
-              (\e -> handleLogin (Just . T.pack . show $ e)) (redirect "/#reagents")
+              (\e -> handleLogin (Just . T.pack . show $ e)) (redirect "/#laboratory")
   where
     err = Just "Unknown user or password"
 
@@ -42,7 +42,6 @@ handleLogout = logout >> redirect "/login"
 
 
 ------------------------------------------------------------------------------
--- | Handle new user form submit
 handleNewUser :: Handler App (AuthManager App) ()
 handleNewUser = method GET handleForm <|> method POST handleFormSubmit
   where

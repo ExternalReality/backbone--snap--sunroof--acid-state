@@ -49,4 +49,5 @@ makeAcidic ''PotionSoapState ['allReagents
                              ,'newReagent
                              ,'reagentById
                              ,'reagentByName
+                             ,'updateReagent
                              ]
