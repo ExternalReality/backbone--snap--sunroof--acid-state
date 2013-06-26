@@ -26,6 +26,7 @@ data TestData = TestData { _acid           :: AcidState UserStore
                            
 makeLenses ''TestData
 
+------------------------------------------------------------------------------
 type AuthenticationTest = StateT TestData Identity Bool
 type TestState = State TestData
 
