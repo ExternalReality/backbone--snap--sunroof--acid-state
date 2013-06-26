@@ -31,7 +31,8 @@ handleLogin authError = heistLocal (I.bindSplices errs) $ render "login"
 handleLoginSubmit :: Handler App (AuthManager App) ()
 handleLoginSubmit =
     loginUser "login" "password" Nothing
-              (\e -> handleLogin (Just . T.pack . show $ e)) (redirect "/#laboratory")
+              (\e -> handleLogin (Just . T.pack . show $ e)) 
+              (redirect "/#laboratory")
   where
     err = Just "Unknown user or password"
 
