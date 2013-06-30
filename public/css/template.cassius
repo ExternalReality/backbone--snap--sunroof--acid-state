@@ -5,3 +5,16 @@
     height:     112px
     padding:    0px 26px 0px 26px
     text-align: left
+
+.ui-tooltip 
+    padding: 8px;
+    position: absolute;
+    z-index: 0;
+    max-width: 300px;
+    -webkit-box-shadow: 0 0 5px #aaa;
+    box-shadow: 0 0 5px #aaa;
+
+body .ui-tooltip
+    border-width: 2px;
+
+

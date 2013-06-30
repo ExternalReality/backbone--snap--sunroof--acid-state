@@ -30,7 +30,7 @@ makeLenses ''ReagentId
 
 
 ------------------------------------------------------------------------------
-newtype ReagentName = ReagentName { _unReagentName :: Text}
+newtype ReagentName = ReagentName { _unReagentName :: Text }
   deriving (Eq, Ord, Data, Typeable, SafeCopy, Show)
 
 makeLenses ''ReagentName

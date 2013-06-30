@@ -14,6 +14,7 @@ function(Backbone, PotionBottleTemplate){
       var template = _.template(PotionBottleTemplate,{});
       this.$el.html(template);
       this.setElement(template);
+      
       this.$el.droppable();
       return this;
     }

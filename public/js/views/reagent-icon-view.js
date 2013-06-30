@@ -9,13 +9,14 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
   var ReagentIconView = Backbone.View.extend({
 
     initialize: function(){
-      this.model     = this.options.model;
+      this.model = this.options.model;
     },
 
     templateBindings: function (){
-      return { reagentName : this.model.get("name")
-	     , imageUrl    : this.model.get("imageUrl")
-             };
+      return { reagentName      : this.model.get("name")
+	     , imageUrl         : this.model.get("imageUrl")
+	     , imageNotFoundUrl : "images/reagent-icons/unavailable/imageNotFoundUrl"
+	     };
     },
 
     render: function(){
@@ -23,6 +24,7 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
       this.$el.html(template);
       this.setElement(template);
       this.$('.reagent-icon').draggable();
+      this.$('.reagent-icon').tooltip();
       return this;
     }
   });

@@ -1,8 +1,10 @@
 <td>
-<% if (typeof(imageUrl) != "undefined") { %>
-    <img class="reagent-icon" src=<%= imageUrl %> alt=<% reagentName %>></img>
-<% } else { %>
-    <span class="reagent-icon"><%= reagentName %></span>
-<% } %>
+  <% if (typeof(imageUrl) != "undefined") { %>
+     <img class="reagent-icon" title="<%=reagentName%>" src=<%= imageUrl %> 
+	  onerror="this.src='images/reagent-icons/unavailable/imageNotFound400.png';">
+    </img>
+  <% } else { %>
+  <span class="reagent-icon"><%= reagentName %></span>
+  <% } %>
 </td>
 
