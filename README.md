@@ -1,12 +1,13 @@
-# This is my README
+# Developer Setup Instructions
 
-# Setup
-#======
+On Debian and Ubuntu systems, repository packages 
 
-On Debian and Ubuntu systems, repository packages haskell-platform and
-cabal-install should do the trick.
+   :::bash
+     apt-get install haskell-platform cabal-install 
 
-Cabal manages haskell packages.
+should do the trick.
+
+Cabal manages haskell packages, kind of like pip for python I guess.
 
     :::bash
       cabal install cabal-dev
@@ -21,5 +22,15 @@ $(HOME)/.cabal/
        #compiles haskell code and starts development web server @ localhost:8000 (well actually 0.0.0.0:8000)
        ./reload.sh
 
-Then the script ./refresh.sh will recompile the haskell code and start
+Then the script ./reload.sh will recompile the haskell code and start
 the development webserver on localhost:8000
+
+The haskell source code lives in
+    :::bash
+	src/
+
+and the client-side code (javascript) lives in:
+    :::bash
+	public/js/
+
+
