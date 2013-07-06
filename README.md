@@ -26,10 +26,12 @@ Then the script ./reload.sh will recompile the haskell code and start
 the development webserver on localhost:8000
 
 The haskell source code lives in
+
     :::bash
 	src/
 
 and the client-side code (javascript) lives in:
+
     :::bash
 	public/js/
 
