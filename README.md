@@ -2,8 +2,8 @@
 
 On Debian and Ubuntu systems, repository packages 
 
-   :::bash
-     apt-get install haskell-platform cabal-install 
+    :::bash
+      apt-get install haskell-platform cabal-install 
 
 should do the trick.
 
