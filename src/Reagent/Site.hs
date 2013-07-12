@@ -14,7 +14,7 @@ import           Snap.Snaplet.AcidState
 import qualified Data.ByteString.Lazy.Char8 as LBS
 ------------------------------------------------------------------------------
 import           Application
-import           Reagent.Reagent
+import           Reagent
 
 ------------------------------------------------------------------------------
 setResponseContentTypeToJSON =

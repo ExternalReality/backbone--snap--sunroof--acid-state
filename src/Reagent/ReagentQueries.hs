@@ -13,7 +13,7 @@ import Data.IxSet as IxSet
 import Data.Maybe (isJust)
 ------------------------------------------------------------------------------
 import PotionSoap
-import Reagent.Reagent
+import Reagent
 
 ------------------------------------------------------------------------------
 newReagent :: Reagent -> Update PotionSoapState Bool
@@ -37,7 +37,6 @@ updateReagent reagent =
   where   
    updateReagent' = 
      return $ reagents %= updateIx (_reagentId reagent) reagent 
-
                 
 
 ------------------------------------------------------------------------------

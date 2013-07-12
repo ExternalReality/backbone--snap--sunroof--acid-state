@@ -18,6 +18,8 @@ import Snap.Snaplet.Session
 ------------------------------------------------------------------------------
 import PotionSoap
 import Reagent.ReagentQueries
+import PotionMaker.PotionMakerQueries
+import Mixture.MixtureQueries
 
 ------------------------------------------------------------------------------
 data App = App
@@ -50,4 +52,7 @@ makeAcidic ''PotionSoapState ['allReagents
                              ,'reagentById
                              ,'reagentByName
                              ,'updateReagent
+                             ,'createPotionMaker
+                             ,'saveMixture
+                             ,'validateMixture
                              ]

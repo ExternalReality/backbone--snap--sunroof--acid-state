@@ -1,23 +1,26 @@
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Authentication.Site where
 
 import           Authentication.AcidStateBackend
 import           Control.Applicative ((<|>))
-import           Control.Monad.Trans
+import           Control.Monad
 import           Data.ByteString (ByteString)
 import           Data.Maybe
 import qualified Data.Text as T
-import qualified Heist.Interpreted as I
 import           Snap.Core
 import           Snap.Snaplet
+import           Snap.Snaplet.AcidState
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Heist
+import qualified Heist.Interpreted as I
 ------------------------------------------------------------------------------
 import           Application
 import           Authentication.AcidStateBackend
-import           Data.Acid
+
+------------------------------------------------------------------------------
+laboratoryURL :: ByteString
+laboratoryURL = "/#laboratory"
 
 
 ------------------------------------------------------------------------------
@@ -32,7 +35,7 @@ handleLoginSubmit :: Handler App (AuthManager App) ()
 handleLoginSubmit =
     loginUser "login" "password" Nothing
               (\e -> handleLogin (Just . T.pack . show $ e)) 
-              (redirect "/#laboratory")
+              (redirect laboratoryURL)
   where
     err = Just "Unknown user or password"
 
@@ -47,13 +50,25 @@ handleNewUser :: Handler App (AuthManager App) ()
 handleNewUser = method GET handleForm <|> method POST handleFormSubmit
   where
     handleForm = render "new_user"
+    
     handleFormSubmit = do 
-    afu <- registerUser "login" "password" 
-    case afu of
-      Left error -> (liftIO $ print (show error)) >> redirect "/"
-      Right user    -> (liftIO $ print (show user)) >> redirect "/"
+    eitherAuthFailureOrUser <- registerUser "login" "password" 
+    case eitherAuthFailureOrUser of
+      Left _     -> redirect "/"
+       Right user -> do
+         maybeRole <- getPostParam "role"
+         case maybeRole of
+           (Just role) -> do
+             eitherErrorUser <- saveUser $ user { userRoles = [Role role] }
+             case eitherErrorUser of
+               (Right user) -> do
+                 let id = (fromJust . userId $ user)
+                 update (CreatePotionMaker id)
+                 redirect "/"
+               (Left _) -> error ""
+           Nothing -> error "error"
 
-
+                            
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("/login"        , with auth (handleLogin Nothing))

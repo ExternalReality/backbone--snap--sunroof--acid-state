@@ -9,9 +9,9 @@
     <tr>
       <td></td>
       <td>
-	<select>
-	  <option value="Admin">Admin</option>
+	<select name="role">
 	  <option value="PotionMaker">PotionMaker</option>	 
+	  <option value="Admin">Admin</option>
 	</select>
       </td>
     </tr>

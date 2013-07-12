@@ -28,13 +28,9 @@ makeLenses ''TestData
 
 ------------------------------------------------------------------------------
 type AuthenticationTest = StateT TestData Identity Bool
-type TestState = State TestData
-
 
 ------------------------------------------------------------------------------
 testState = TestData (openAcidState emptyUS) defAuthUser
-saveTime = UTCTime (ModifiedJulianDay 1) (secondsToDiffTime 1)
-
 
 ------------------------------------------------------------------------------
 main :: IO ()
@@ -65,6 +61,8 @@ whenISaveTheUser = do
   case result of
        Left (AuthError e) -> error e
        Right _ -> acid .= acid'
+  where
+    saveTime = UTCTime (ModifiedJulianDay 1) (secondsToDiffTime 1)
 
     
 ------------------------------------------------------------------------------
