@@ -5,6 +5,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Authentication.AcidStateBackend
         where
@@ -26,7 +27,7 @@ import           Snap
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Session
 import           System.Directory
-import           System.IO.Error hiding (catch)
+import           System.IO.Error 
 import           Web.ClientSession
 import           System.FilePath ((</>))
 
@@ -86,8 +87,8 @@ saveAuthUser :: AuthUser
 saveAuthUser user utcTime = do
   let authUserId = userId user
   case authUserId of
-    Just id -> saveExistingUser user id utcTime
-    Nothing -> saveNewUser user utcTime
+    Just uid -> saveExistingUser user uid utcTime
+    Nothing  -> saveNewUser user utcTime
 
 
 ------------------------------------------------------------------------------
@@ -113,21 +114,22 @@ saveExistingUser :: AuthUser
                  -> UserId
                  -> UTCTime
                  -> Update UserStore (Either AuthFailure AuthUser)
-saveExistingUser user userId currentTime = do
+saveExistingUser user uId currentTime = do
   loginCache <- use loginIndex
-  if Just userId /= H.lookup (userLogin user) loginCache
+  if Just uId /= H.lookup (userLogin user) loginCache
      then return $ Left DuplicateLogin
      else do
        userCache  <- use users
 
-       let oldUser = fromMaybe user $ H.lookup userId userCache
+       let oldUser = fromMaybe user $ H.lookup uId userCache
        loginIndex %= H.delete (userLogin oldUser)
        tokenIndex %= deleteIfJust (userRememberToken oldUser)
 
        let user' = user { userUpdatedAt = Just currentTime }
-       updateUserCache user' userId
-       updateLoginCache (userLogin user') userId
-       updateTokenCache (userRememberToken user) userId
+       updateUserCache user' uId
+       updateLoginCache (userLogin user') uId
+       updateTokenCache (userRememberToken user) uId
+
 
        return $ Right user
 
@@ -177,8 +179,8 @@ byRememberToken tok = do
 
 ------------------------------------------------------------------------------
 destroyU :: AuthUser -> Update UserStore ()
-destroyU au =
-    case userId au of
+destroyU authUser =
+    case userId authUser of
       Nothing  -> return ()
       Just uid -> do
           UserStore us li ti n <- get
@@ -213,7 +215,7 @@ instance IAuthBackend (AcidState UserStore) where
     lookupByUserId acid uid        = query  acid $ ByUserId uid
     lookupByLogin  acid l          = query  acid $ ByLogin l
     lookupByRememberToken acid tok = query  acid $ ByRememberToken tok
-    destroy acid au                = update acid $ DestroyU au
+    destroy acid authUser          = update acid $ DestroyU authUser
 
 
 ------------------------------------------------------------------------------
@@ -237,8 +239,8 @@ initAcidAuthManager s lns =
           removeResourceLockOnUnload
           rng  <- liftIO mkRNG
           key  <- liftIO $ getKey (asSiteKey s)
-          dir  <- getSnapletFilePath
-          acid <- liftIO $ openLocalStateFrom dir emptyUS
+          sfp  <- getSnapletFilePath
+          acid <- liftIO $ openLocalStateFrom sfp emptyUS
           return AuthManager
                    { backend               = acid
                    , session               = lns
@@ -255,8 +257,8 @@ initAcidAuthManager s lns =
 ------------------------------------------------------------------------------
 removeResourceLockOnUnload :: Initializer b v ()
 removeResourceLockOnUnload = do
-  path <- getSnapletFilePath
-  let resourceLockPath = path </> "open.lock"
+  snapletFilePath <- getSnapletFilePath
+  let resourceLockPath = snapletFilePath </> "open.lock"
   onUnload $ removeIfExists resourceLockPath
 
 
