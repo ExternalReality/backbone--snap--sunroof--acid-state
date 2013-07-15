@@ -2,6 +2,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 ------------------------------------------------------------------------------
 -- | This module defines our application's state type and an alias for its
 -- handler monad.
@@ -14,12 +15,11 @@ import Snap.Snaplet.AcidState
 import Snap.Snaplet.Heist
 import Snap.Snaplet.Auth
 import Snap.Snaplet.Session
-
 ------------------------------------------------------------------------------
+import Mixture.MixtureQueries
+import PotionMaker.PotionMakerQueries
 import PotionSoap
 import Reagent.ReagentQueries
-import PotionMaker.PotionMakerQueries
-import Mixture.MixtureQueries
 
 ------------------------------------------------------------------------------
 data App = App
@@ -31,20 +31,16 @@ data App = App
 
 makeLenses ''App
 
-
 ------------------------------------------------------------------------------
 instance HasHeist App where
     heistLens = subSnaplet heist
-
 
 ------------------------------------------------------------------------------
 instance HasAcid App PotionSoapState where
      getAcidStore = view $ acid . snapletValue
 
-
 ------------------------------------------------------------------------------
 type AppHandler = Handler App App
-
 
 ------------------------------------------------------------------------------
 makeAcidic ''PotionSoapState ['allReagents
