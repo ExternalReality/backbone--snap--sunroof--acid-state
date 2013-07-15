@@ -2,9 +2,9 @@
 
 module Authentication.Site where
 
-import           Authentication.AcidStateBackend
+
 import           Control.Applicative ((<|>))
-import           Control.Monad
+
 import           Data.ByteString (ByteString)
 import           Data.Maybe
 import qualified Data.Text as T
@@ -16,7 +16,7 @@ import           Snap.Snaplet.Heist
 import qualified Heist.Interpreted as I
 ------------------------------------------------------------------------------
 import           Application
-import           Authentication.AcidStateBackend
+
 
 ------------------------------------------------------------------------------
 laboratoryURL :: ByteString
@@ -55,7 +55,7 @@ handleNewUser = method GET handleForm <|> method POST handleFormSubmit
     eitherAuthFailureOrUser <- registerUser "login" "password" 
     case eitherAuthFailureOrUser of
       Left _     -> redirect "/"
-       Right user -> do
+      Right user -> do
          maybeRole <- getPostParam "role"
          case maybeRole of
            (Just role) -> do
