@@ -10,7 +10,7 @@ import Data.IxSet
 import Data.SafeCopy
 import PotionMaker
 import Reagent
-import Snap.Snaplet.Auth
+
 
 
 ------------------------------------------------------------------------------
