@@ -5,7 +5,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Reagent where
+module Reagent.Reagent where
 
 ------------------------------------------------------------------------------
 import Control.Applicative
@@ -27,7 +27,7 @@ newtype ReagentId = ReagentId { _unReagentId :: Integer }
   deriving (Eq, Ord, Data, Enum, Typeable, SafeCopy, Show)
 
 makeLenses ''ReagentId
- 
+
 
 ------------------------------------------------------------------------------
 newtype ReagentName = ReagentName { _unReagentName :: Text }
