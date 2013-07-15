@@ -6,7 +6,7 @@ module Reagent.ReagentQueries where
 ------------------------------------------------------------------------------
 import Control.Lens
 import Control.Monad
-import Control.Monad.Reader (ask)
+
 import Control.Monad.State
 import Data.Acid
 import Data.IxSet as IxSet
