@@ -5,22 +5,19 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Reagent.Reagent where
+module Reagent where
 
 ------------------------------------------------------------------------------
 import Control.Applicative
 import Control.Lens (makeLenses)
 import Control.Monad (mzero)
-import Control.Monad.Reader.Class
-import Data.Acid
 import Data.Aeson
-import Data.Aeson.TH
 import Data.Data
 import Data.IxSet
 import Data.Maybe
 import Data.SafeCopy
 import Data.Text hiding (drop)
-import Data.Typeable
+
 
 ------------------------------------------------------------------------------
 newtype ReagentId = ReagentId { _unReagentId :: Integer }
