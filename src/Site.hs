@@ -11,7 +11,6 @@ import           Data.Text
 import           Snap
 import           Snap.Snaplet.AcidState
 import           Snap.Snaplet.Auth
-import           Snap.Snaplet.Auth.Backends.JsonFile
 import           Snap.Snaplet.Heist
 import           Snap.Snaplet.Session.Backends.CookieSession
 import           Snap.Util.FileServe
@@ -28,13 +27,15 @@ routes :: [(ByteString, Handler App App ())]
 routes = [ (""      , serveDirectoryWith fancyDirectoryConfig "public")
          , ("tests" , serveFile "public/templates/tests.html")
          , ("reagent-icon.css",    css) 
-         ]
-         
+         ]         
+
 
 ------------------------------------------------------------------------------
 template :: CssUrl Text
 template = $(cassiusFileReload "public/css/template.cassius")
 
+
+------------------------------------------------------------------------------
 mapping :: Text -> [(Text, Text)] -> Text
 mapping css _ = "css"  
 
