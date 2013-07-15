@@ -6,6 +6,7 @@ cabal-dev
 *.chi
 *.chs.h
 TAGS
+\.hsenv
 
 #snap
 log
