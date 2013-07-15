@@ -1,7 +1,7 @@
 module PotionMaker.PotionMakerQueries where
 
 import Control.Lens
-import Control.Monad
+
 import Data.Acid
 import Data.IxSet as IxSet
 import qualified Data.Set as S
