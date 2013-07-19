@@ -23,7 +23,6 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
       var template = _.template(ReagentIconTemplate, this.templateBindings() );
       this.$el.html(template);
       this.setElement(template);
-      this.$('.reagent-icon').draggable();
       this.$('.reagent-icon').tooltip();
       return this;
     }
