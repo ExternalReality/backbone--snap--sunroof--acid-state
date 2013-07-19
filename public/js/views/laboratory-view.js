@@ -12,17 +12,22 @@ function( Backbone
 
   var LaboratoryView = Backbone.View.extend({
 
+    initialize : function() {
+      this.reagentList = new ReagentListView();
+      this.mixture     = new MixtureView();
+    },
+
     render: function() {
        
       var template = _.template(LaboratoryTemplate, {});
       this.$el.html(template);
       this.setElement(template);
 
-      var reagents = new ReagentListView().render().el;
-      var mixture  = new MixtureView().render().el;
+      var reagentListElement = this.reagentList.render().el;
+      var mixtureElement     = this.mixture.render().el;
 
-      this.$('.reagents').replaceWith(reagents);
-      this.$('.mixture').replaceWith(mixture);
+      this.$('.reagents').replaceWith(reagentListElement);
+      this.$('.mixture').replaceWith(mixtureElement);
 
       return this;
     }
