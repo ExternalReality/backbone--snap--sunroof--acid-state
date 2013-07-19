@@ -2,7 +2,6 @@ define([ 'backbone'
        , 'models/reagent-model'
        , 'text!/../templates/reagent_icon_template.html'
        , 'bootstrap'
-       , 'jquery.ui'
        ],
 
 function(Backbone, ReagentModel, ReagentIconTemplate){
@@ -23,7 +22,6 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
       var template = _.template(ReagentIconTemplate, this.templateBindings() );
       this.$el.html(template);
       this.setElement(template);
-      this.$('.reagent-icon').tooltip();
       return this;
     }
   });
