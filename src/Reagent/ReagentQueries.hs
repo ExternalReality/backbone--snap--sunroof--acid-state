@@ -3,7 +3,6 @@
 
 module Reagent.ReagentQueries where
 
-------------------------------------------------------------------------------
 import Control.Lens
 import Control.Monad
 
@@ -19,7 +18,7 @@ import Reagent
 newReagent :: Reagent -> Update PotionSoapState Bool
 newReagent reagent = do
   reagentState <- use reagents   
-  let reagentNameExists = isJust . getOne $reagentState @= (_name reagent)
+  let reagentNameExists = isJust . getOne $reagentState @= _name reagent
      
   if reagentNameExists
     then return True
@@ -32,24 +31,21 @@ newReagent reagent = do
 ------------------------------------------------------------------------------
 updateReagent :: Reagent -> Update PotionSoapState ()
 updateReagent reagent = 
-  maybe (return ()) updateReagent' ( _reagentId reagent )
+  maybe (return ()) updateReagent' $ _reagentId reagent
   
-  where   
+  where
    updateReagent' = 
      return $ reagents %= updateIx (_reagentId reagent) reagent 
                 
-
 ------------------------------------------------------------------------------
 allReagents :: Query PotionSoapState [Reagent]
 allReagents = liftM toList (view reagents)
 
-
 ------------------------------------------------------------------------------
 reagentById :: ReagentId -> Query PotionSoapState (Maybe Reagent)
-reagentById reagentId = do
+reagentById rId = do
   reagentState <- view reagents
-  return . getOne $ reagentState @= reagentId
-
+  return . getOne $ reagentState @= rId
 
 ------------------------------------------------------------------------------
 reagentByName :: ReagentName -> Query PotionSoapState (Maybe Reagent)
@@ -57,24 +53,20 @@ reagentByName reagentName = do
   reagentState <- view reagents
   return . getOne $ reagentState @= reagentName
 
-
 ------------------------------------------------------------------------------
 incrementNextReagentId :: (MonadState PotionSoapState m) => m ()
-incrementNextReagentId = do
-  nextReagentId.unReagentId += 1
-
+incrementNextReagentId = nextReagentId.unReagentId += 1
 
 ------------------------------------------------------------------------------
 createReagent :: (MonadState PotionSoapState m) => Reagent                                                
                                                 -> m Reagent
 createReagent reagent = do
-  id <- (use nextReagentId)
-  return $ reagent { _reagentId = Just id }
-
+  nextId <- use nextReagentId
+  return $ reagent { _reagentId = Just nextId }
                                   
 ------------------------------------------------------------------------------
 saveReagent :: Reagent -> Update PotionSoapState ()
 saveReagent reagent = do
-  let name =  _name reagent
+  let reagentName =  _name reagent
   reagentState <- use reagents
-  reagents .= IxSet.updateIx name reagent reagentState
+  reagents .= IxSet.updateIx reagentName reagent reagentState

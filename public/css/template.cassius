@@ -17,7 +17,7 @@
 body .ui-tooltip
     border-width: 2px;
    
-#potion-bottle 
+#mixture
     margin-right: left 294px
     height: 100%
     width: 50% 

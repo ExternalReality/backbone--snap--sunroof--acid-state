@@ -1,3 +1,4 @@
 #!/bin/bash
-cabal-dev install -fdevelopment
-cabal-dev/bin/potion-soap 
+source .hsenv/bin/activate
+cabal install -fdevelopment
+.hsenv/cabal/bin/potion-soap 

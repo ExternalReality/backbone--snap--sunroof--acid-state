@@ -31,7 +31,7 @@ function( Backbone
 
       var reagentModels = this.collection.models;
 
-      var COLS = 3;
+      var COLS = 2;
       var tableCells = _.map(reagentModels, this.toHtmlTableCellRepresentation);
       var tableElements = this.intersperseAfterPos(COLS,"<tr/>",tableCells);
       _.each(tableElements, function(elem){this.$(".body").append(elem);}, this); 

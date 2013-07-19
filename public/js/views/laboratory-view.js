@@ -1,12 +1,12 @@
 define([ 'backbone'
        , 'views/reagent-list-view'
-       , 'views/potion-bottle-view'
+       , 'views/mixture-view'
        , 'text!/../templates/laboratory.html'
        ],
 
 function( Backbone
 	, ReagentListView
-	, PotionBottleView
+	, MixtureView
 	, LaboratoryTemplate
 	){
 
@@ -19,10 +19,10 @@ function( Backbone
       this.setElement(template);
 
       var reagents = new ReagentListView().render().el;
-      var potionBottle = new PotionBottleView().render().el;
+      var mixture  = new MixtureView().render().el;
 
       this.$('.reagents').replaceWith(reagents);
-      this.$('.potion-bottle').replaceWith(potionBottle);
+      this.$('.mixture').replaceWith(mixture);
 
       return this;
     }

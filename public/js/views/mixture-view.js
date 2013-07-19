@@ -1,9 +1,8 @@
 define([ 'backbone'
-       , 'text!/../templates/potion-bottle.html'
-       , 'jquery.ui'
+       , 'text!/../templates/mixture.html'      
        ],
 
-function(Backbone, PotionBottleTemplate){
+function(Backbone, MixtureTemplate){
 
   var PotionBottleView = Backbone.View.extend({
 
@@ -11,11 +10,10 @@ function(Backbone, PotionBottleTemplate){
     },
 
     render: function() {
-      var template = _.template(PotionBottleTemplate,{});
+      var template = _.template(MixtureTemplate,{});
       this.$el.html(template);
       this.setElement(template);
       
-      this.$el.droppable();
       return this;
     }
 
