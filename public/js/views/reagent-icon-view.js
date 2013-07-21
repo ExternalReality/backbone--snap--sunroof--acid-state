@@ -6,9 +6,15 @@ define([ 'backbone'
 
 function(Backbone, ReagentModel, ReagentIconTemplate){
   var ReagentIconView = Backbone.View.extend({
-
+    
+    events : { 'click' : 'iconClicked' }, 
+    
     initialize: function(){
       this.model = this.options.model;
+    },
+
+    iconClicked : function() {
+      this.trigger("icon-clicked", this.model);
     },
 
     templateBindings: function (){

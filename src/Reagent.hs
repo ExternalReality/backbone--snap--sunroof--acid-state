@@ -21,7 +21,7 @@ import Data.Text hiding (drop)
 
 ------------------------------------------------------------------------------
 newtype ReagentId = ReagentId { _unReagentId :: Integer }
-  deriving (Eq, Ord, Data, Enum, Typeable, SafeCopy, Show)
+   deriving (Eq, Ord, Data, Enum, Typeable, SafeCopy, Show)
 
 makeLenses ''ReagentId
 

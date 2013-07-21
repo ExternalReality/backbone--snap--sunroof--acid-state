@@ -1,12 +1,18 @@
 define([ 'backbone'
+       , 'collections/mixture'
        , 'text!/../templates/mixture.html'      
        ],
+function(Backbone, Mixture, MixtureTemplate){
 
-function(Backbone, MixtureTemplate){
-
-  var PotionBottleView = Backbone.View.extend({
+  var MixtureView = Backbone.View.extend({
 
     initialize : function(){
+      this.collection = new Mixture();
+    },
+
+    addReagent : function(reagent){
+      this.$("#mixture-reagents").append('<li>' + reagent.name() + '</li>');
+      this.collection.addReagent(reagent);
     },
 
     render: function() {
@@ -19,5 +25,5 @@ function(Backbone, MixtureTemplate){
 
   });
 
-  return PotionBottleView;
+  return MixtureView;
 });

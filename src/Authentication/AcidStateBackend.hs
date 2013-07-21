@@ -35,7 +35,6 @@ import           System.FilePath ((</>))
 type UserLogin = Text
 type RToken    = Text
 
-
 ------------------------------------------------------------------------------
 data UserStore = UserStore
                    { _users      :: H.HashMap UserId AuthUser

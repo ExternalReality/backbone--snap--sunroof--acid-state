@@ -15,6 +15,12 @@ function( Backbone
     initialize : function() {
       this.reagentList = new ReagentListView();
       this.mixture     = new MixtureView();
+
+      this.listenTo(this.reagentList, "iconClicked", this.addToMixture);
+    },
+
+    addToMixture : function(args) {
+      this.mixture.addReagent(args);
     },
 
     render: function() {

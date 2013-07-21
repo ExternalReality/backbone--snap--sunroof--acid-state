@@ -16,12 +16,17 @@ function( Backbone
 
       //The variable reagents is bound by the bootstrap script loaded in the above require.js list
       this.collection = new Reagents(self.reagents);
+
       this.listenTo(this.collection, "change", this.render);
       this.listenTo(this.collection, "add", this.render);
 
       var fetchOnInterval = function() { this.collection.fetch(); };
       fetchOnInterval = _.bind(fetchOnInterval, this);
       self.setInterval(fetchOnInterval, 10000);
+    },
+
+    iconClicked : function(args){
+      this.trigger("iconClicked", args); 
     },
 
     render: function() {
@@ -32,7 +37,7 @@ function( Backbone
       var reagentModels = this.collection.models;
 
       var COLS = 2;
-      var tableCells = _.map(reagentModels, this.toHtmlTableCellRepresentation);
+      var tableCells = _.map(reagentModels, this.toHtmlTableCellRepresentation, this);
       var tableElements = this.intersperseAfterPos(COLS,"<tr/>",tableCells);
       _.each(tableElements, function(elem){this.$(".body").append(elem);}, this); 
 
@@ -51,6 +56,7 @@ function( Backbone
 
     toHtmlTableCellRepresentation : function(reagent) {
       var reagentIconView = new ReagentIconView({model : reagent});
+      this.listenToOnce(reagentIconView, "icon-clicked", this.iconClicked);
       var reagentIconHtmlElement = reagentIconView.render().el;
       return reagentIconHtmlElement;
     }
