@@ -1,4 +1,4 @@
-<td>
+<li>
   <% if (typeof(imageUrl) != "undefined") { %>
      <img class="reagent-icon" title="<%=reagentName%>" src=<%= imageUrl %> 
 	  onerror="this.src='images/reagent-icons/unavailable/imageNotFound400.png';">
@@ -6,5 +6,5 @@
   <% } else { %>
   <span class="reagent-icon"><%= reagentName %></span>
   <% } %>
-</td>
+</li>
 

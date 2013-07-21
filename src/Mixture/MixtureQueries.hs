@@ -18,7 +18,7 @@ import           PotionSoap
 saveMixture :: Mixture Validated -> PotionMakerId -> Update PotionSoapState ()
 saveMixture mixture pmId = do
   potionMakerState <- use potionMakers
-  let maybePotionMaker = getOne $ potionMakerState @= Just pmId
+  let maybePotionMaker = getOne $ potionMakerState @= pmId
   case maybePotionMaker of
     (Just potionMaker) -> do
       let potionMaker' = potionMaker { _mixtures = S.insert mixture (_mixtures potionMaker) }

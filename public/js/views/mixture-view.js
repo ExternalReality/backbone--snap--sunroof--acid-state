@@ -5,14 +5,20 @@ define([ 'backbone'
 function(Backbone, Mixture, MixtureTemplate){
 
   var MixtureView = Backbone.View.extend({
+    
+    events : { 'click #save-mixture-button' : 'saveMixture' },
 
     initialize : function(){
-      this.collection = new Mixture();
+      this.mixture = new Mixture();
     },
 
     addReagent : function(reagent){
       this.$("#mixture-reagents").append('<li>' + reagent.name() + '</li>');
-      this.collection.addReagent(reagent);
+      this.mixture.addReagent(reagent);
+    },
+
+    saveMixture : function(){
+      this.mixture.saveMixture();
     },
 
     render: function() {

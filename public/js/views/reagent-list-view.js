@@ -8,13 +8,18 @@ define([ 'backbone'
 function( Backbone
 	, Reagents
 	, ReagentIconView
-	, ReagentsTemplate ){
+	, ReagentsTemplate
+    ){
 
   var ReagentListView = Backbone.View.extend({
 
     initialize: function(){
 
-      //The variable reagents is bound by the bootstrap script loaded in the above require.js list
+      /*  The variable reagents is bound by the bootstrap script 
+       *  loaded in the above require.js list and is populated with
+       *  reagents by the server when the application starts.
+       */
+
       this.collection = new Reagents(self.reagents);
 
       this.listenTo(this.collection, "change", this.render);
@@ -22,12 +27,13 @@ function( Backbone
 
       var fetchOnInterval = function() { this.collection.fetch(); };
       fetchOnInterval = _.bind(fetchOnInterval, this);
-      self.setInterval(fetchOnInterval, 10000);
+      self.setInterval(fetchOnInterval, 10000);     
     },
 
     iconClicked : function(args){
       this.trigger("iconClicked", args); 
     },
+
 
     render: function() {
       var template = _.template(ReagentsTemplate,{});
@@ -36,25 +42,12 @@ function( Backbone
 
       var reagentModels = this.collection.models;
 
-      var COLS = 2;
-      var tableCells = _.map(reagentModels, this.toHtmlTableCellRepresentation, this);
-      var tableElements = this.intersperseAfterPos(COLS,"<tr/>",tableCells);
-      _.each(tableElements, function(elem){this.$(".body").append(elem);}, this); 
-
+      var iconViews = _.map(reagentModels, this.toIconView, this);
+      _.each(iconViews, function(elem){this.$el.append(elem);}, this);
       return this;
     },
 
-    intersperseAfterPos : function (pos, el, ls) {
-      var result = [];
-      var m = false;
-      for(var i = 0; i < ls.length; i++){
-	  m =  (i % pos) == pos - 1 ;
-	  m ? result = result.concat([ls[i],el]) : result = result.concat(ls[i]);	  
-      }
-      return result;
-    }, 
-
-    toHtmlTableCellRepresentation : function(reagent) {
+    toIconView : function(reagent) {
       var reagentIconView = new ReagentIconView({model : reagent});
       this.listenToOnce(reagentIconView, "icon-clicked", this.iconClicked);
       var reagentIconHtmlElement = reagentIconView.render().el;

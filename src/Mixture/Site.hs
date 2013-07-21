@@ -32,5 +32,5 @@ saveMixture = method PUT $ do
         Nothing   -> modifyResponse $ setResponseStatus 500 "Invalid Request"
 
 ------------------------------------------------------------------------------
-routes :: [(ByteString, Handler App (AuthManager App) ())]
-routes = [ ("api/mixtures", saveMixture) ]
+routes :: [(ByteString, Handler App App ())]
+routes = [ ("api/mixtures", with auth saveMixture) ]

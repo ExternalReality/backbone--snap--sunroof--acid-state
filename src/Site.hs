@@ -18,6 +18,7 @@ import           Text.Cassius (CssUrl, cassiusFile, cassiusFileReload, renderCss
 ------------------------------------------------------------------------------
 import           Application
 import qualified Authentication.Site as Auth
+import qualified Mixture.Site as Mixture
 import           Authentication.AcidStateBackend
 import qualified Reagent.Site as Reagent
 import           PotionSoap
@@ -60,5 +61,6 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     addRoutes routes
     addRoutes Auth.routes
     addRoutes Reagent.routes
+    addRoutes Mixture.routes
     addAuthSplices auth
     return $ App h s x a
