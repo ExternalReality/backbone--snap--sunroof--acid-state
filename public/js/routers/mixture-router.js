@@ -1,35 +1,27 @@
 define([ 'backbone'
        , 'views/potionmakers-mixture-view'
+       , 'backbone-extentions/router-utilities'
        ],
 
 function( Backbone 
 	, PotionMakersMixturesView
+	, RouterUtils
 	){
     
   var MixtureRouter = Backbone.Router.extend({
-    routes: { 'potionMakersMixtures' : 'potionMakersMixtures' }
+    
+    routes: { 'potionMakersMixtures' : 'potionMakersMixtures' },
+
+    initialize : function(potionMakersMixturesView){
+      this.potionMakersMixturesView    = potionMakersMixturesView;
+      this.potionMakersMixturesHandler = RouterUtils.replaceContentWith(this.potionMakersMixturesView);
+    },
+       
+    run : function(){      
+      this.on('route:potionMakersMixtures', this.potionMakersMixturesHandler); 
+    }
   });
 
-  var initialize = function(){
-    var mixture_router           = new MixtureRouter();
-    var potionMakersMixturesView = new PotionMakersMixturesView();
+  return MixtureRouter;					   
 
-    mixture_router.on('route:potionMakersMixtures', function(){      
-      var content                     = $('#content');
-      var potionMakersMixturesElement = potionMakersMixturesView.render().$el;
-      content.contents().replaceWith(potionMakersMixturesElement);
-    });
-
-  };
-
-  return { initialize: initialize };
 });
-
-// function replaceOrAppend(elem, substitute){
-//   if (elem.children().size() > 0){
-//     elem.children().replaceWith(substitute);
-//   }else{
-//     elem.append(substitute);
-//   }
-// }
-

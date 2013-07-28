@@ -1,7 +1,7 @@
 define([ 'backbone'
        , 'text!/../templates/mixture.html'      
        ],
-function(Backbone, Mixture, MixtureTemplate){
+function(Backbone, MixtureTemplate){
 
   var MixtureView = Backbone.View.extend({
     
