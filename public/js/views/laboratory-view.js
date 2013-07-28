@@ -1,7 +1,8 @@
-define([ 'backbone'
+define([ 'backbone'              
        , 'views/reagent-list-view'
        , 'views/mixture-view'
        , 'text!/../templates/laboratory.html'
+       , 'backbone-extentions/view-extentions'
        ],
 
 function( Backbone
@@ -12,9 +13,9 @@ function( Backbone
 
   var LaboratoryView = Backbone.View.extend({
 
-    initialize : function() {
-      this.reagentList = new ReagentListView();
-      this.mixture     = new MixtureView();
+    initialize : function(reagentListView, mixtureView) {
+      this.reagentList = reagentListView;
+      this.mixture     = mixtureView;
 
       this.listenTo(this.reagentList, "iconClicked", this.addToMixture);
     },

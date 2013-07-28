@@ -27,6 +27,7 @@ deriveSafeCopy 0 'base ''NotValidated
 deriveJSON id ''NotValidated
 
 deriveSafeCopy 0 'base ''Validated
+deriveJSON id ''Validated
 
 ------------------------------------------------------------------------------
 data Mixture a = Mixture { _reagents :: Set Reagent }
@@ -41,7 +42,3 @@ instance FromJSON (Mixture NotValidated) where
     Mixture <$> (fromList <$> v .: "reagents")
   
   parseJSON _ = mzero
-
-
-
-

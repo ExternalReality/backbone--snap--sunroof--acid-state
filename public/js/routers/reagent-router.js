@@ -5,7 +5,6 @@ define([ 'backbone'
 
 function( Backbone 
 	, LaboratoryView
-	, ReagentInputView
 	){
     
   var ReagentRouter = Backbone.Router.extend({
@@ -14,19 +13,18 @@ function( Backbone
           }
   });
 
-  var initialize = function(){
+  var initialize = function(laboratoryView, reagentInputView){
     var reagent_router = new ReagentRouter();
 
     reagent_router.on('route:laboratory', function(){
       var content = $('#content');
-      var laboratoryView = new LaboratoryView();
-      var laboratory = laboratoryView.render().el;
-      content.append(laboratory);
+
+      var laboratoryElement = laboratoryView.render().el;
+      content.append(laboratoryElement);
     });
 
     reagent_router.on('route:inputReagent', function(){
       var content = $('#content');
-      var reagentInputView = new ReagentInputView();
       reagentInputView.render().$el.appendTo(content);
     });
 

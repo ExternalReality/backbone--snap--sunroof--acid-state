@@ -1,4 +1,5 @@
 define([ 'backbone'
+       , 'backbone-extentions/view-extentions'
        , 'models/reagent-model'
        , 'text!/../templates/reagent_template.html'
        ],

@@ -1,10 +1,8 @@
 define([ 'backbone'
-       , 'models/reagent-model'
-       , 'collections/reagents'
        , 'text!/../templates/reagentInput.html'
        ],
 
-function(Backbone, Reagent, Reagents, ReagentForm){
+function(Backbone, ReagentForm){
 
   var ReagentInputView = Backbone.View.extend({
     events: { 'change input[name=name]'                : "bindInputs"
@@ -14,9 +12,9 @@ function(Backbone, Reagent, Reagents, ReagentForm){
             , 'click input[type=button]'               : "submit"
             },
 
-    initialize : function(){
-      this.model = new Reagent();
-      this.reagents = new Reagents();
+    initialize : function(reagentModel, reagentCollection){
+      this.model    = reagentModel;
+      this.reagents = reagentCollection;
       this.reagents.fetch();
     },
 

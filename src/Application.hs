@@ -50,5 +50,6 @@ makeAcidic ''PotionSoapState ['allReagents
                              ,'updateReagent
                              ,'createPotionMaker
                              ,'saveMixture
+                             ,'potionMakersMixtures
                              ,'validateMixture
                              ]

@@ -17,7 +17,7 @@ function( Backbone
 
       /*  The variable reagents is bound by the bootstrap script 
        *  loaded in the above require.js list and is populated with
-       *  reagents by the server when the application starts.
+       *  reagents by the server.
        */
 
       this.collection = new Reagents(self.reagents);
@@ -27,7 +27,7 @@ function( Backbone
 
       var fetchOnInterval = function() { this.collection.fetch(); };
       fetchOnInterval = _.bind(fetchOnInterval, this);
-      self.setInterval(fetchOnInterval, 10000);     
+      self.setInterval(fetchOnInterval, 10000000);     
     },
 
     iconClicked : function(args){
@@ -49,7 +49,7 @@ function( Backbone
 
     toIconView : function(reagent) {
       var reagentIconView = new ReagentIconView({model : reagent});
-      this.listenToOnce(reagentIconView, "icon-clicked", this.iconClicked);
+      this.listenTo(reagentIconView, "icon-clicked", this.iconClicked);
       var reagentIconHtmlElement = reagentIconView.render().el;
       return reagentIconHtmlElement;
     }
