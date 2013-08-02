@@ -14,7 +14,7 @@ reagentIconCss = ".reagent-icon" ?
 
 ------------------------------------------------------------------------------
 mixtureCss :: Css
-mixtureCss = "#mixture" ?
+mixtureCss = "#soap-creation-area" ?
   do marginRight (px 294)
      height      (pct 100)
      width       (pct 50)

@@ -1,43 +1,45 @@
-define([ 'backbone'              
+define([ 'backbone'
+       , 'rx'  
        , 'views/reagent-list-view'
-       , 'views/mixture-view'
+       , 'views/soap-creation-view'
        , 'text!/../templates/laboratory.html'
+       , 'backbone-extentions/view-utilities'	 
        , 'backbone-extentions/view-extentions'
        ],
 
 function( Backbone
+	, Rx  
 	, ReagentListView
-	, MixtureView
-	, LaboratoryTemplate
+	, SoapCreateionView
+    	, LaboratoryTemplate
+	, ViewUtils
 	){
 
   var LaboratoryView = Backbone.View.extend({
 
-    initialize : function(reagentListView, mixtureView) {
-      this.reagentList = reagentListView;
-      this.mixture     = mixtureView;
-
+    initialize : function(reagentListView, soapCreationView) {
+      this.reagentList         = reagentListView;
+      this.soapCreationView    = soapCreationView;
+      this.changeRouteObserver = ViewUtils.createRouteChangeObserver(this);
       this.listenTo(this.reagentList, "iconClicked", this.addToMixture);
     },
 
     addToMixture : function(args) {
-      this.mixture.addReagent(args);
+      this.soapCreationView.addReagent(args);
     },
-
+    
     render: function() {
        
-      var template = _.template(LaboratoryTemplate, {});
-      this.$el.html(template);
-      this.setElement(template);
+      this.renderTemplate(LaboratoryTemplate, {});
 
-      var reagentListElement = this.reagentList.render().el;
-      var mixtureElement     = this.mixture.render().el;
+      var reagentListElement  = this.reagentList.render().el;
+      var soapCreationElement = this.soapCreationView.render().el;
 
       this.$('.reagents').replaceWith(reagentListElement);
-      this.$('.mixture').replaceWith(mixtureElement);
+      this.$('.soap').replaceWith(soapCreationElement);
 
       return this;
-    }
+    }   
 
   });
 

@@ -1,8 +1,9 @@
 define([ 'backbone'       
+       , 'rx'	 
        , 'routers/reagent-router'
        , 'routers/mixture-router'
        , 'views/reagent-list-view'
-       , 'views/mixture-view'
+       , 'views/soap-creation-view'
        , 'views/laboratory-view'
        , 'views/reagent-input-view'
        , 'views/potionmakers-mixture-view' 
@@ -12,10 +13,11 @@ define([ 'backbone'
        ],
 
 function( Backbone
+	, Rx 
 	, ReagentRouter
 	, MixtureRouter
         , ReagentListView
-	, MixtureView 
+	, SoapCreationView
         , LaboratoryView
 	, ReagentInputView
         , PotionMakersMixturesView
@@ -23,13 +25,13 @@ function( Backbone
 	, Reagents
 	, Mixture
 	){
-
+  
   var reagentModel             = new Reagent();
   var reagentCollection        = new Reagents();
   var reagentInputView         = new ReagentInputView(reagentModel, reagentCollection);
 
   var mixture                  = new Mixture();
-  var mixtureView              = new MixtureView(mixture);
+  var mixtureView              = new SoapCreationView(mixture);
   var reagentListView          = new ReagentListView();
   var laboratoryView           = new LaboratoryView(reagentListView, mixtureView);
 
@@ -37,9 +39,14 @@ function( Backbone
 
   var reagentRouter            = new ReagentRouter(laboratoryView, reagentInputView);
   var mixtureRouter            = new MixtureRouter(potionMakersMixturesView);
-  
+ 
+  mixtureRouter.routeChangeObservable
+	       .subscribe(laboratoryView.changeRouteObserver);
 
-  var initialize = function(){
+  reagentRouter.routeChangeObservable
+	       .subscribe(potionMakersMixturesView.changeRouteObserver);
+
+  var initialize = function(){    
     reagentRouter.run();
     mixtureRouter.run();
     Backbone.history.start();

@@ -1,10 +1,11 @@
 define([ 'backbone'
        , 'models/reagent-model'
        , 'text!/../templates/reagent_icon_template.html'
+       , 'backbone-extentions/view-utilities'
        , 'bootstrap'
        ],
 
-function(Backbone, ReagentModel, ReagentIconTemplate){
+function(Backbone, ReagentModel, ReagentIconTemplate, ViewUtils){
   var ReagentIconView = Backbone.View.extend({
     
     events : { 'click' : 'iconClicked' }, 
@@ -24,10 +25,13 @@ function(Backbone, ReagentModel, ReagentIconTemplate){
 	     };
     },
 
+    disableImageDragEffect : function(){
+       _.first(this.$('.reagent-icon')).ondragstart = function() { return false; };
+    },
+
     render: function(){
-      var template = _.template(ReagentIconTemplate, this.templateBindings() );
-      this.$el.html(template);
-      this.setElement(template);
+      this.renderTemplate(ReagentIconTemplate, this.templateBindings());
+      this.disableImageDragEffect();
       return this;
     }
   });

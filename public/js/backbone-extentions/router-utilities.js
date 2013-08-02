@@ -1,7 +1,30 @@
 define ([ 'backbone'
+	, 'rx'  
         ],    
     
-function () {
+function (Backbone, Rx) {
+
+  var createObservable = function(event, context){
+      function creationFn (observer){
+
+	function handler(e) {
+	  observer.onNext(e);
+	}
+	
+	context.on(event, handler);
+
+	function remove (){
+	  context.off(event, handler);
+	};
+	
+	return _.bind(remove, context);
+      }
+
+      var creationFn = _.bind(creationFn, context);
+
+      return Rx.Observable.create(creationFn);
+    };
+
 
   var replaceContentWith = function(view) { 
     return function(){
@@ -11,7 +34,9 @@ function () {
     };
   };
 
-  return { replaceContentWith : replaceContentWith };
+  return { replaceContentWith : replaceContentWith
+	 , createObservable   : createObservable
+	 };
   	
 });
 

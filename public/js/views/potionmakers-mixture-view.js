@@ -1,18 +1,25 @@
 define([ 'backbone'
+       , 'rx'
+       , 'backbone-extentions/view-utilities'	 	 
        , 'text!/../templates/potion_makers_mixtures_template.html'
        ],
 
-function(Backbone, PotionMakersMixturesTemplate){
-    var PotionMakersMixturesView = Backbone.View.extend({
+function(Backbone
+	, Rx
+	, ViewUtils
+	, PotionMakersMixturesTemplate
+	){
 
-      initialize : function(){
-      },
+  var PotionMakersMixturesView = Backbone.View.extend({
+    initialize : function(){
+      this.changeRouteObserver = ViewUtils.createRouteChangeObserver(this);
+    },
 
-      render: function() {
-	var template = _.template(PotionMakersMixturesTemplate, {});
-	$(this.el).html(template);	
-	return this;
-      }
+
+    render: function() {
+      this.renderTemplate(PotionMakersMixturesTemplate, {});
+      return this;
+    }
   });
 
   return PotionMakersMixturesView;
