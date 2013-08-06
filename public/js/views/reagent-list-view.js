@@ -2,7 +2,6 @@ define([ 'backbone'
        , 'collections/reagents'
        , 'views/reagent-icon-view'
        , 'text!/../templates/reagents_table_template.html'
-       , 'bootstrap'
        ],
 
 function( Backbone
@@ -13,14 +12,9 @@ function( Backbone
 
   var ReagentListView = Backbone.View.extend({
 
-    initialize: function(){
+    initialize: function(reagents){
 
-      /*  The variable reagents is bound by the bootstrap script 
-       *  loaded in the above require.js list and is populated with
-       *  reagents by the server.
-       */
-
-      this.collection = new Reagents(self.reagents);
+      this.collection = reagents;
 
       this.listenTo(this.collection, "change", this.render);
       this.listenTo(this.collection, "add", this.render);
@@ -33,7 +27,6 @@ function( Backbone
     iconClicked : function(args){
       this.trigger("iconClicked", args); 
     },
-
 
     render: function() {
       var template = _.template(ReagentsTemplate,{});

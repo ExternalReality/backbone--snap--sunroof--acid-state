@@ -1,5 +1,5 @@
 define([ 'backbone'
-       , 'text!/../templates/mixture.html'      
+       , 'text!/../templates/soap.html'      
        ],
 function(Backbone, SoapCreateionTemplate){
 
@@ -11,7 +11,7 @@ function(Backbone, SoapCreateionTemplate){
 
     initialize : function(mixture){
       this.mixture = mixture;
-   },
+    },
 
     addReagent : function(reagent){
       if (this.mixture.containsReagent(reagent)){
@@ -27,18 +27,20 @@ function(Backbone, SoapCreateionTemplate){
     },
 
     clearMixture : function(){
-      this.mixture.set("reagents", []); //= new Mixture();      
+      this.setReagentsToNewArray();
       this.$("#soap-reagents").replaceWith('<ul id="soap-reagents"></ul>');
+    },
+
+    setReagentsToNewArray : function(){
+      this.mixture.set("reagents", []);
     },
 
     render: function() {
       var template = _.template(SoapCreateionTemplate,{});
       this.$el.html(template);
-      this.setElement(template);
-      
+      this.setElement(template);      
       return this;
     }
-
   });
 
   return SoapCreationView;

@@ -4,9 +4,11 @@ module Reagent.Site where
 
 import           Data.Aeson
 import           Data.ByteString.Char8 (ByteString)
+import qualified Data.ByteString.Lazy.Char8 as LBS
+import           Data.Maybe
 import           Snap
 import           Snap.Snaplet.AcidState
-import qualified Data.ByteString.Lazy.Char8 as LBS
+import           Snap.Snaplet.Auth
 ------------------------------------------------------------------------------
 import           Application
 
@@ -16,12 +18,17 @@ setResponseContentTypeToJSON =
   modifyResponse $ setContentType "application/json"
 
 ------------------------------------------------------------------------------
-bootstrap :: Handler App App ()
+bootstrap :: Handler App (AuthManager App) ()
 bootstrap = method GET $ do
+  userId   <- fromMaybe (error "error") `fmap` liftM (userId =<<) currentUser
   reagents <- query AllReagents
+  mixtures <- query $ PotionMakersMixtures userId
   let reagentsInJsonFormat = encode reagents
+  let mixturesInJsonFormat = encode mixtures
   modifyResponse $ setContentType "application/javascript; charset=UTF-8"
-  writeLBS $LBS.concat ["var reagents =", reagentsInJsonFormat, ";"]
+  writeLBS $ LBS.concat [ "var reagents =",  reagentsInJsonFormat, ";"
+                        , "var mixtures =", mixturesInJsonFormat, ";"
+                        ]
 
 ------------------------------------------------------------------------------
 allReagents :: Handler App App ()
@@ -57,5 +64,5 @@ newReagent = method POST $ do
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("api/reagents"     , allReagents <|> newReagent)
          , ("api/reagents/:id" , updateReagent)
-         , ("js/bootstrap.js"  , bootstrap)
+         , ("js/bootstrap.js"  , with auth bootstrap)
          ]

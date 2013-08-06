@@ -10,7 +10,8 @@ define([ 'backbone'
        , 'models/reagent-model'
        , 'collections/reagents'
        , 'collections/mixture'
-       ],
+       , 'views/mixture-view'
+    ],
 
 function( Backbone
 	, Rx 
@@ -24,18 +25,23 @@ function( Backbone
         , Reagent
 	, Reagents
 	, Mixture
+	, MixtureView
 	){
-  
+   
+  var bootstrapedReagents      = new Reagents(self.reagents);
+  var bootstrapedMixtures      = _.map(self.mixtures, function(mixtureData){ return new Mixture(mixtureData); });  
+  var mixtureViews             = _.map(bootstrapedMixtures, function(mixture){ return new MixtureView(mixture); });
+
   var reagentModel             = new Reagent();
   var reagentCollection        = new Reagents();
   var reagentInputView         = new ReagentInputView(reagentModel, reagentCollection);
 
   var mixture                  = new Mixture();
-  var mixtureView              = new SoapCreationView(mixture);
-  var reagentListView          = new ReagentListView();
-  var laboratoryView           = new LaboratoryView(reagentListView, mixtureView);
+  var soapCreateionView        = new SoapCreationView(mixture);
+  var reagentListView          = new ReagentListView(bootstrapedReagents);
+  var laboratoryView           = new LaboratoryView(reagentListView, soapCreateionView);
 
-  var potionMakersMixturesView = new PotionMakersMixturesView();
+  var potionMakersMixturesView = new PotionMakersMixturesView(mixtureViews);
 
   var reagentRouter            = new ReagentRouter(laboratoryView, reagentInputView);
   var mixtureRouter            = new MixtureRouter(potionMakersMixturesView);

@@ -1,45 +1,32 @@
-define([ 'backbone'
-       , 'text!/../templates/mixture.html'      
-       ],
-function(Backbone, MixtureTemplate){
+define (['backbone'
+	, 'text!/../templates/mixture.html'
+	, 'views/reagent-view'
+        ],    
+
+function ( Backbone, MixtureTemplate, ReagentView ) {
 
   var MixtureView = Backbone.View.extend({
+
+  initialize : function (mixture){
+    this.mixture = mixture;
+    this.reagentsViews = _.map(mixture.reagents(),function(reagent){return new ReagentView(reagent);});
+  },
     
-    events : { 'click #save-mixture-button'  : 'saveMixture'
-             , 'click #clear-mixture-button' : 'clearMixture'
-	     },
+  render : function(){
+    this.renderTemplate(MixtureTemplate, {});    
+    if (this.mixture.reagents().length > 0){ this.renderReagents();};
+    return this;
+    
+  },
 
-    initialize : function(mixture){
-      this.mixture = mixture;
-   },
-
-    addReagent : function(reagent){
-      if (this.mixture.containsReagent(reagent)){
-	return;
-      } else { 
-	this.$("#mixture-reagents").append('<li>' + reagent.name() + '</li>');
-	this.mixture.addReagent(reagent);
-      };
-    },
-
-    saveMixture : function(){
-      this.mixture.saveMixture();
-    },
-
-    clearMixture : function(){
-      this.mixture.set("reagents", []); //= new Mixture();      
-      this.$("#mixture-reagents").replaceWith('<ul id="mixture-reagents"></ul>');
-    },
-
-    render: function() {
-      var template = _.template(MixtureTemplate,{});
-      this.$el.html(template);
-      this.setElement(template);
-      
-      return this;
-    }
-
+  renderReagents : function () {
+    var reagentElements = _.map(this.reagentsViews, function(view){ return view.render(); });    
+    var renderFn = _.bind(function(view){view.$el.appendTo(this.el);}, this);
+    _.each(reagentElements, renderFn);
+  }
+  
   });
-
+  
   return MixtureView;
+  
 });

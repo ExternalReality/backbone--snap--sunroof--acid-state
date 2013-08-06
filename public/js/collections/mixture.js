@@ -6,9 +6,9 @@ function( Backbone, ReagentModel ){
 
   var Mixture = Backbone.Model.extend({
     url: '/api/mixtures',
-
-    initialize : function(){
-      this.set({reagents : []});
+      
+    initialize : function(mixtureData){
+	this.set('reagents', mixtureData ? mixtureData.reagents : []);      
     },
 
     reagents : function(){
