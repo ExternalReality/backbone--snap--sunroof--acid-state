@@ -9,7 +9,7 @@ define([ 'backbone'
        , 'views/potionmakers-mixture-view' 
        , 'models/reagent-model'
        , 'collections/reagents'
-       , 'collections/mixture'
+       , 'models/mixture'
        , 'views/mixture-view'
     ],
 

@@ -1,5 +1,5 @@
 define([ 'backbone'
-       , 'collections/mixture'
+       , 'models/mixture'
        ],
 
 function(Backbone, Mixture){
