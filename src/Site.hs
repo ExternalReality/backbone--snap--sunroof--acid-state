@@ -5,7 +5,7 @@ module Site
   ) where
 
 ------------------------------------------------------------------------------
-import           Data.ByteString.Char8 (ByteString)
+import           Data.ByteString.Char8                       (ByteString)
 import           Snap
 import           Snap.Snaplet.AcidState
 import           Snap.Snaplet.Auth
@@ -14,19 +14,20 @@ import           Snap.Snaplet.Session.Backends.CookieSession
 import           Snap.Util.FileServe
 ------------------------------------------------------------------------------
 import           Application
-import qualified CSS.Site as CSS
-import qualified Authentication.Site as Auth
-import qualified Mixture.Site as Mixture
 import           Authentication.AcidStateBackend
-import qualified Reagent.Site as Reagent
+import qualified Authentication.Site                         as Auth
+import qualified CSS.Site                                    as CSS
+import qualified Mixture.Site                                as Mixture
 import           PotionSoap
+import qualified Reagent.Site                                as Reagent
 
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ (""      , serveDirectoryWith fancyDirectoryConfig "public")
          , ("tests" , serveFile "public/templates/tests.html")
-         ]         
+         , ("icons", serveDirectory "public/images/icons")
+         ]
 
 ------------------------------------------------------------------------------
 app :: SnapletInit App App
