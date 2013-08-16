@@ -1,10 +1,10 @@
+{-# LANGUAGE DeriveDataTypeable         #-}
+{-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE RecordWildCards            #-}
+{-# LANGUAGE StandaloneDeriving         #-}
+{-# LANGUAGE TemplateHaskell            #-}
 
 module Mixture ( Mixture (..)
                , MixtureId (..)
@@ -15,18 +15,18 @@ module Mixture ( Mixture (..)
                ) where
 
 ------------------------------------------------------------------------------
-import Control.Applicative
-import Control.Lens hiding (Indexable, (.=))
-import Control.Monad (mzero)
-import Data.Aeson
-import Data.Aeson.TH
-import Data.Data
-import Data.IxSet hiding (fromList)
-import Data.Maybe
-import Data.SafeCopy
-import Data.Set
+import           Control.Applicative
+import           Control.Lens        hiding (Indexable, (.=))
+import           Control.Monad       (mzero)
+import           Data.Aeson
+import           Data.Aeson.TH
+import           Data.Data
+import           Data.IxSet          hiding (fromList)
+import           Data.Maybe
+import           Data.SafeCopy
+import           Data.Set
 ------------------------------------------------------------------------------
-import Reagent
+import           Reagent
 
 data NotValidated = NotValidated
 data Validated = Validated

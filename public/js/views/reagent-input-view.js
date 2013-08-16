@@ -30,10 +30,12 @@ function(Backbone, ReagentForm){
       var reagent = this.reagents.findWhere({name : modelsName});
       if (typeof reagent != 'undefined') {
 	this.model.set({id : reagent.get("id")});
+	Backbone.sync("update", this.model);
+      } else
+      {
+	this.model.save();
       }
-      this.model.save();
     },
-
 
     render : function() {
       var template = _.template(ReagentForm);

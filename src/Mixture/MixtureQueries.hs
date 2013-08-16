@@ -7,14 +7,13 @@ import           Control.Monad
 import           Data.Acid
 import           Data.ByteString (ByteString)
 import           Data.IxSet
-import qualified Data.IxSet as IxSet
-import qualified Data.Set as S
+import qualified Data.IxSet      as IxSet
+import qualified Data.Set        as S
 ------------------------------------------------------------------------------
 import           Mixture
 import           PotionMaker
-import           PotionSoap hiding (_mixtures)
-import qualified PotionSoap as PS
-
+import           PotionSoap      hiding (_mixtures)
+import qualified PotionSoap      as PS
 
 ------------------------------------------------------------------------------
 saveMixture :: Mixture Validated -> PotionMakerId -> Update PotionSoapState ()
@@ -39,20 +38,20 @@ saveMixture mixture pmId = do
     Nothing -> return ()
 
 ------------------------------------------------------------------------------
-validateMixture :: Mixture NotValidated -> 
-                   Query PotionSoapState 
+validateMixture :: Mixture NotValidated ->
+                   Query PotionSoapState
                          (Either ByteString (Mixture Validated))
 validateMixture mixture = do
   allReagents <- liftM toSet $ view PS.reagents
   let mixtureReagents = Mixture._reagents mixture
-  return $ if S.isSubsetOf mixtureReagents allReagents               
+  return $ if S.isSubsetOf mixtureReagents allReagents
              then Right (Mixture Nothing mixtureReagents)
-             else Left "Invalid Mixture" 
-             
+             else Left "Invalid Mixture"
+
 ------------------------------------------------------------------------------
 potionMakersMixtures :: PotionMakerId ->
                         Query PotionSoapState (S.Set (Mixture Validated))
 potionMakersMixtures pmId = do
   potionMakerState <- view potionMakers
   let maybePotionMaker = getOne $ potionMakerState @= pmId
-  return $ maybe (error "no potion maker") _mixtures maybePotionMaker 
+  return $ maybe (error "no potion maker") _mixtures maybePotionMaker

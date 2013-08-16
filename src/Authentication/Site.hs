@@ -3,17 +3,17 @@
 module Authentication.Site where
 
 
-import           Control.Applicative ((<|>))
+import           Control.Applicative    ((<|>))
 
-import           Data.ByteString (ByteString)
+import           Data.ByteString        (ByteString)
 import           Data.Maybe
-import qualified Data.Text as T
+import qualified Data.Text              as T
+import qualified Heist.Interpreted      as I
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.AcidState
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Heist
-import qualified Heist.Interpreted as I
 ------------------------------------------------------------------------------
 import           Application
 
@@ -34,7 +34,7 @@ handleLogin authError = heistLocal (I.bindSplices errs) $ render "login"
 handleLoginSubmit :: Handler App (AuthManager App) ()
 handleLoginSubmit =
     loginUser "login" "password" Nothing
-              (\e -> handleLogin (Just . T.pack . show $ e)) 
+              (\e -> handleLogin (Just . T.pack . show $ e))
               (redirect laboratoryURL)
   where
     err = Just "Unknown user or password"
@@ -50,9 +50,9 @@ handleNewUser :: Handler App (AuthManager App) ()
 handleNewUser = method GET handleForm <|> method POST handleFormSubmit
   where
     handleForm = render "new_user"
-    
-    handleFormSubmit = do 
-    eitherAuthFailureOrUser <- registerUser "login" "password" 
+
+    handleFormSubmit = do
+    eitherAuthFailureOrUser <- registerUser "login" "password"
     case eitherAuthFailureOrUser of
       Left _     -> redirect "/"
       Right user -> do
@@ -68,7 +68,7 @@ handleNewUser = method GET handleForm <|> method POST handleFormSubmit
                (Left _) -> error ""
            Nothing -> error "error"
 
-                            
+
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("/login"        , with auth (handleLogin Nothing))

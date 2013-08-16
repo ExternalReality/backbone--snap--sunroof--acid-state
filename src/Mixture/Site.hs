@@ -4,8 +4,8 @@ module Mixture.Site where
 
 import           Control.Monad          (liftM)
 import           Data.Aeson
-import           Data.Set
 import           Data.ByteString        (ByteString)
+import           Data.Set
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.AcidState
@@ -31,7 +31,7 @@ saveMixture = method PUT $ do
       case maybeUserId of
         (Just uId) -> update $ SaveMixture mixture uId
         Nothing    -> modifyResponse $ setResponseStatus 500 "Invalid Request"
-        
+
 
 ------------------------------------------------------------------------------
 potionMakersMixtures :: Handler App (AuthManager App) ()
@@ -42,7 +42,7 @@ potionMakersMixtures = method GET $ do
       mixtures <- query $ PotionMakersMixtures potionMakerId
       writeLBS $ encode $ toList mixtures
     Nothing -> error "Error in potionMakerMixtures"
-  
+
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]

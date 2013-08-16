@@ -1,8 +1,9 @@
 define([ 'backbone'
+       , 'underscore'
        , 'models/reagent-model'
        ],
 
-function( Backbone, ReagentModel ){
+function( Backbone, _, ReagentModel ){
 
   var Mixture = Backbone.Model.extend({
     url: '/api/mixtures',
