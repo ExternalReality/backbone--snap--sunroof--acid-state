@@ -3,7 +3,6 @@ require.config({
          , 'underscore':  'lib/underscore/underscore-min'
          , 'backbone':    'lib/backbone/backbone-min'
 	 , 'rx':          'lib/rxjs/rx.min'
-         , 'mustache':    'lib/mustache/mustache.js'
          },
 
   shim: {
