@@ -12,16 +12,15 @@ function( Backbone
             , 'reagentInput' : 'inputReagent'
             },
 
-    initialize : function(laboratoryView, reagentInputView)
-    {
+    initialize : function(laboratoryView, reagentInputView){
       this.laboratoryView   = laboratoryView;
       this.reagentInputView = reagentInputView;
       this.routeChangeObservable = RouterUtils.createObservable('route:laboratory', this);
     },
 
     run : function(){
-      this.on('route:laboratory',   RouterUtils.replaceContentWith(this.laboratoryView));
-      this.on('route:inputReagent', RouterUtils.replaceContentWith(this.reagentInputView));
+      this.on('route:laboratory',   function(){RouterUtils.openView(this.laboratoryView);});
+      this.on('route:inputReagent', function(){RouterUtils.replaceContentWith(this.reagentInputView);});
       }
   });
 

@@ -21,6 +21,10 @@ function( Backbone
       this.reagentList         = reagentListView;
       this.soapCreationView    = soapCreationView;
       this.changeRouteObserver = ViewUtils.createRouteChangeObserver(this);
+    },
+
+    open : function(){
+      this.soapCreationView.open();
       this.listenTo(this.reagentList, "iconClicked", this.addToMixture);
     },
 

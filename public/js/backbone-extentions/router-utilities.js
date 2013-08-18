@@ -25,17 +25,21 @@ function (Backbone, Rx) {
       return Rx.Observable.create(creationFn);
     };
 
-
   var replaceContentWith = function(view) { 
-    return function(){
 	var content = $('#content');
 	var node    = view.render().el;
         replaceOrAppend(content, node);
-    };
   };
+
+
+  function openView(view){
+    replaceContentWith(view);
+    view.open();
+  }
 
   return { replaceContentWith : replaceContentWith
 	 , createObservable   : createObservable
+	 , openView           : openView
 	 };
   	
 });

@@ -26,6 +26,10 @@ function(Backbone, SoapCreateionTemplate){
       this.mixture.saveMixture();
     },
 
+    open : function() {
+      this.clearMixture();
+    },
+
     clearMixture : function(){
       this.setReagentsToNewArray();
       this.$("#soap-reagents").replaceWith('<ul id="soap-reagents"></ul>');
