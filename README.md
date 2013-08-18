@@ -1,4 +1,4 @@
-# Developer Setup Instructions
+B1;2802;0cB1;2802;0c# Developer Setup Instructions
 
 On Debian and Ubuntu systems, repository packages 
 
@@ -10,7 +10,15 @@ should do the trick.
 Cabal manages haskell packages, kind of like pip for python I guess.
 
     :::bash
+      # update the haskell repository cache
+      cabal update
+      # install cabal-dev, for managing haskell projects
+      # I think this is no longer necessary
       cabal install cabal-dev
+      cabal install hsenv
+      # run hsenv, which creates a .hsenv folder where the haskell
+      # virtual environment is stored for this application
+      hsenv
 
 This installs some stuff locally (i.e. no root privileges needed) to
 $(HOME)/.cabal/
