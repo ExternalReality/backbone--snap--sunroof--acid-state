@@ -22,7 +22,12 @@ function(Backbone, ReagentModel, ReagentIconTemplate, ViewUtils){
       return { reagentName      : this.model.get("name")
 	     , imageUrl         : this.model.get("imageUrl")
 	     , imageNotFoundUrl : "images/reagent-icons/unavailable/imageNotFoundUrl"
+	     , isImageUndefined : this.isImageUndefined()
 	     };
+    },
+
+    isImageUndefined: function(){
+	return typeof(this.model.get("imageUrl")) != "undefined";
     },
 
     disableImageDragEffect : function(){
