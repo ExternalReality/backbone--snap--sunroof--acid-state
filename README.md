@@ -12,9 +12,7 @@ Cabal manages haskell packages, kind of like pip for python I guess.
     :::bash
       # update the haskell repository cache
       cabal update
-      # install cabal-dev, for managing haskell projects
-      # I think this is no longer necessary
-      cabal install cabal-dev
+      # install hsenv, for managing haskell projects
       cabal install hsenv
       # run hsenv, which creates a .hsenv folder where the haskell
       # virtual environment is stored for this application
