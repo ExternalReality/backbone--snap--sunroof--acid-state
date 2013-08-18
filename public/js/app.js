@@ -1,5 +1,6 @@
 define([ 'backbone'       
        , 'rx'	 
+       , 'mustache'
        , 'routers/reagent-router'
        , 'routers/mixture-router'
        , 'views/reagent-list-view'
@@ -15,6 +16,7 @@ define([ 'backbone'
 
 function( Backbone
 	, Rx 
+	, Mustache
 	, ReagentRouter
 	, MixtureRouter
         , ReagentListView
