@@ -16,13 +16,17 @@ function( Backbone
 
     initialize : function(potionMakersMixturesView){
       this.potionMakersMixturesView    = potionMakersMixturesView;
-      this.potionMakersMixturesHandler = RouterUtils.replaceContentWith(this.potionMakersMixturesView);
       this.routeChangeObservable       = RouterUtils.createObservable('route:potionMakersMixtures', this);
     },
 
     run : function(){
       this.on('route:potionMakersMixtures', this.potionMakersMixturesHandler);
+    },
+
+    potionMakersMixturesHandler : function(){
+      RouterUtils.replaceContentWith(this.potionMakersMixturesView);
     }
+
   });
 
   return MixtureRouter;
