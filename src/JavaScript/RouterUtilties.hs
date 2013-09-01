@@ -6,7 +6,6 @@ module JavaScript.RouterUtilities (replaceContentWith) where
 -----------------------------------------------------------------------------------------
 import Control.Monad
 import Data.Boolean
-import Data.Default
 import Language.Sunroof
 import Language.Sunroof.JS.JQuery
 ------------------------------------------------------------------------------
@@ -25,8 +24,8 @@ replaceOrAppend content replacement = do
 replaceContentWith :: JSBackboneView NotRendered -> JSA ()
 replaceContentWith view = do
   content <- jQuery "#content"
-  element <- render view 
-  replaceOrAppend content $ el element
+  renderedView <- (view ! render) `apply` ()  
+  replaceOrAppend content $ el renderedView
 
 ------------------------------------------------------------------------------
 children :: JSObject -> JS t JSObject
@@ -39,6 +38,3 @@ replaceWith = invoke "replaceWith"
 ------------------------------------------------------------------------------
 jsLength :: JSSelector JSNumber
 jsLength = attr "length"
-
-------------------------------------------------------------------------------
-

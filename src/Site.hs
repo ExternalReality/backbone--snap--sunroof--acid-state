@@ -15,6 +15,7 @@ import           Snap.Util.FileServe
 ------------------------------------------------------------------------------
 import           Application
 import           Authentication.AcidStateBackend
+import qualified JavaScript.Site                             as JavaScript
 import qualified Authentication.Site                         as Auth
 import qualified CSS.Site                                    as CSS
 import qualified Mixture.Site                                as Mixture
@@ -44,5 +45,6 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     addRoutes CSS.routes
     addRoutes Mixture.routes
     addRoutes Reagent.routes
+    addRoutes JavaScript.routes
     addAuthSplices auth
     return $ App h s x a

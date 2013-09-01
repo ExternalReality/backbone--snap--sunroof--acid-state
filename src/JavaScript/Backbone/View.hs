@@ -1,4 +1,5 @@
-{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeFamilies   #-}
+{-# LANGUAGE EmptyDataDecls #-}
 
 module JavaScript.Backbone.View ( el
                                 , events
@@ -6,6 +7,8 @@ module JavaScript.Backbone.View ( el
                                 , render
                                 , renderTemplate
                                 , model
+                                , view
+                                , viewObject
                                 , Rendered
                                 , NotRendered
                                 , JSBackboneView(..)
@@ -51,19 +54,24 @@ instance EqB (JSBackboneView t) where
   (JSBackboneView a) ==* (JSBackboneView b) = a ==* b
 
 ------------------------------------------------------------------------------
--- | Get HTML element from a rendered view
-el :: JSBackboneView Rendered -> JSObject
-el (JSBackboneView jso ) = jso ! attr "el"
+-- | Create a new backbone js view object
+viewObject :: JS t (JSBackboneView NotRendered)
+viewObject = JSBackboneView `fmap` new "Object" () 
 
 ------------------------------------------------------------------------------
-renderTemplate :: JSBackboneView a -> JSString -> JSTemplateBindings -> JS t ()
-renderTemplate view template bindings = do
-  renderedTemplate <- Mustache.render $$ (template, bindings)
-  setElement view renderedTemplate 
+-- | Get DOM element from a rendered view
+el :: JSBackboneView Rendered -> JSObject
+el _view = _view ! attr "el"
+
+------------------------------------------------------------------------------
+renderTemplate :: JSBackboneView a -> JSObject -> JSString -> JSTemplateBindings -> JS t ()
+renderTemplate _view templateRenderer template bindings = do
+  renderedTemplate <- Mustache.render (template, bindings) templateRenderer
+  setElement _view renderedTemplate 
   
 ------------------------------------------------------------------------------
 setElement :: JSBackboneView a -> JSObject ->  JS t ()
-setElement  view element = invoke "setElement" element (obj view)
+setElement  _view element = invoke "setElement" element _view
 
 ------------------------------------------------------------------------------
 render :: JSSelector (JSFunction () (JSBackboneView Rendered))
@@ -78,5 +86,9 @@ events :: SunroofKey a => JSSelector (JSMap a (JSFunction () ()))
 events = attr "events"
 
 ------------------------------------------------------------------------------
-extend :: JSFunction JSObject (JSBackboneView NotRendered)
-extend = fun "Backbone.View.extend" 
+view :: JSSelector JSObject
+view = attr "View"
+
+------------------------------------------------------------------------------
+extend :: JSObject -> JSObject -> JS t (JSBackboneView NotRendered)
+extend = invoke "extend"

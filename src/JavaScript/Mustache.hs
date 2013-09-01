@@ -5,5 +5,5 @@ import Language.Sunroof.JS.Map
 
 type JSTemplateBindings = JSMap JSString JSObject
 
-render :: JSFunction (JSString, JSTemplateBindings) JSObject 
-render = fun "Mustache.render"
+render ::  (JSString, JSTemplateBindings) -> JSObject -> JS t JSObject 
+render = invoke "render"
