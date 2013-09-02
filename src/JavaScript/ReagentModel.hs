@@ -1,5 +1,5 @@
 {-# LANGUAGE TypeFamilies    #-}
-
+-- 
 module JavaScript.ReagentModel (reagentModelModule) where
 
 import Language.Sunroof
@@ -18,7 +18,4 @@ reagentModelModule = defineModule "ReagentIconViewModule"
 reagentModel :: JSObject -> JS t JSBackboneModel
 reagentModel backbone = do
   reagent <- new "Object" () 
-  (`extend` (backbone ! model)) reagent
-                  
-  
-                                                                                                             
+  (`extend` (backbone ! model)) reagent                  

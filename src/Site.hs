@@ -22,7 +22,6 @@ import qualified Mixture.Site                                as Mixture
 import           PotionSoap
 import qualified Reagent.Site                                as Reagent
 
-
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ (""      , serveDirectoryWith fancyDirectoryConfig "public")
