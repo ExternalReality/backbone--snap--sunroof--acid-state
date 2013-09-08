@@ -1,10 +1,9 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeFamilies    #-}
 
-module JavaScript.Backbone.Model (JSBackboneModel
-                                 , model
-                                 , extend
+module JavaScript.Backbone.Model (JSBackboneModel (..)                       
                                  , save
+                                 , get
                                  ) where
 
 ------------------------------------------------------------------------------
@@ -36,9 +35,5 @@ save :: JSBackboneModel -> JS t ()
 save = invoke "save" ()
 
 ------------------------------------------------------------------------------
-model :: JSSelector JSObject
-model = attr "Model"
-
-------------------------------------------------------------------------------
-extend :: JSObject -> JSObject -> JS t JSBackboneModel
-extend = invoke "extend"
+get :: (Sunroof a, SunroofKey b, SunroofArgument b) => JSBackboneModel -> b -> JS t a
+get obj arg = invoke "get" arg obj

@@ -1,13 +1,12 @@
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeFamilies   #-}
 {-# LANGUAGE EmptyDataDecls #-}
 
 module JavaScript.Backbone.View ( el
                                 , events
-                                , extend
                                 , render
                                 , renderTemplate
                                 , model
-                                , view
                                 , viewObject
                                 , Rendered
                                 , NotRendered
@@ -21,6 +20,7 @@ import Language.Sunroof.JS.Map
 ------------------------------------------------------------------------------
 import           JavaScript.Mustache hiding (render)
 import qualified JavaScript.Mustache as Mustache
+import           JavaScript.Backbone.Model
 
 ------------------------------------------------------------------------------
 data Rendered
@@ -44,7 +44,6 @@ instance Sunroof (JSBackboneView t) where
 type instance BooleanOf (JSBackboneView t) = JSBool
 
 ------------------------------------------------------------------------------
--- | Can be returned in branches.
 instance IfB (JSBackboneView t) where
   ifB = jsIfB
 
@@ -64,7 +63,7 @@ el :: JSBackboneView Rendered -> JSObject
 el _view = _view ! attr "el"
 
 ------------------------------------------------------------------------------
-renderTemplate :: JSBackboneView a -> JSObject -> JSString -> JSTemplateBindings -> JS t ()
+renderTemplate :: JSBackboneView a -> JSObject -> JSString -> TemplateBindings -> JS t ()
 renderTemplate _view templateRenderer template bindings = do
   renderedTemplate <- Mustache.render (template, bindings) templateRenderer
   setElement _view renderedTemplate 
@@ -74,21 +73,16 @@ setElement :: JSBackboneView a -> JSObject ->  JS t ()
 setElement  _view element = invoke "setElement" element _view
 
 ------------------------------------------------------------------------------
+-- | The render attribte of the view which is to be set to a JavaScript function
 render :: JSSelector (JSFunction () (JSBackboneView Rendered))
 render = attr "render"
 
 ------------------------------------------------------------------------------
-model :: JSSelector JSObject
+-- | The model attribute of the view  
+model :: JSSelector t
 model = attr "model" 
 
 ------------------------------------------------------------------------------
+-- | The events attribute of the view
 events :: SunroofKey a => JSSelector (JSMap a (JSFunction () ()))
 events = attr "events"
-
-------------------------------------------------------------------------------
-view :: JSSelector JSObject
-view = attr "View"
-
-------------------------------------------------------------------------------
-extend :: JSObject -> JSObject -> JS t (JSBackboneView NotRendered)
-extend = invoke "extend"

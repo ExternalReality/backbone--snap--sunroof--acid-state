@@ -2,6 +2,7 @@ define([ 'backbone'
        , 'text!/../templates/soap.html'      
        ],
 function(Backbone, SoapCreateionTemplate){
+  "use strict";
 
   var SoapCreationView = Backbone.View.extend({
     
@@ -17,7 +18,7 @@ function(Backbone, SoapCreateionTemplate){
       if (this.mixture.containsReagent(reagent)){
 	return;
       } else { 
-	this.$("#soap-reagents").append('<li>' + reagent.name() + '</li>');
+	this.$("#soap-reagents").append('<li>' + reagent.get("name") + '</li>');
 	this.mixture.addReagent(reagent);
       };
     },

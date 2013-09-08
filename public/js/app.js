@@ -11,7 +11,8 @@ define([ 'backbone'
        , 'collections/reagents'
        , 'models/mixture'
        , 'views/mixture-view'
-    ],
+       , '../reagentModelM'
+       ],
 
 function( Backbone
 	, Rx 
@@ -26,13 +27,14 @@ function( Backbone
 	, Reagents
 	, Mixture
 	, MixtureView
+        , SunroofReagentModel
 	){
    
   var bootstrapedReagents      = new Reagents(self.reagents);
   var bootstrapedMixtures      = _.map(self.mixtures, function(mixtureData){ return new Mixture(mixtureData); });  
   var mixtureViews             = _.map(bootstrapedMixtures, function(mixture){ return new MixtureView(mixture); });
 
-  var reagentModel             = new Reagent();
+  var reagentModel             = new SunroofReagentModel();
   var reagentCollection        = new Reagents();
   var reagentInputView         = new ReagentInputView(reagentModel, reagentCollection);
 

@@ -1,9 +1,8 @@
-module JavaScript.Mustache (render, JSTemplateBindings) where
+module JavaScript.Mustache (render, TemplateBindings) where
 
 import Language.Sunroof
-import Language.Sunroof.JS.Map
 
-type JSTemplateBindings = JSMap JSString JSObject
+type TemplateBindings = JSObject
 
-render ::  (JSString, JSTemplateBindings) -> JSObject -> JS t JSObject 
+render :: (JSString, TemplateBindings) -> JSObject -> JS t JSObject 
 render = invoke "render"

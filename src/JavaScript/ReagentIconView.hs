@@ -1,64 +1,83 @@
+{-# LANGUAGE RankNTypes        #-}
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module JavaScript.ReagentIconView (reagentIconViewModule) where
 
+import Data.Boolean
 import Data.Default
-import Language.Sunroof.JS.Map
 import Language.Sunroof
+import Language.Sunroof.JS.Map
 ------------------------------------------------------------------------------
+import JavaScript.Backbone
 import JavaScript.Backbone.Events
 import JavaScript.Backbone.View
 import JavaScript.Mustache        hiding (render)
+import JavaScript.ReagentModel
 import JavaScript.Require
 
 ------------------------------------------------------------------------------
 reagentIconViewModule :: IO String
 reagentIconViewModule =
   sunroofCompileJSA def "ReagentIconViewModule" $ do
-       requireArray <- array [ "backbone"
-                             , "mustache"
-                             , "models/reagent-model"
-                             , "text!/../templates/reagent_icon_template.html"
-                             , "backbone-extentions/view-utilities" :: String                             
-                             ]
-       moduleFunction <- function reagentIconView
-       define `apply` (requireArray, moduleFunction)
+    requireArray <- array [ "backbone"
+                          , "mustache"
+                          , "models/reagent-model"
+                          , "text!/../templates/reagent_icon_template.html"
+                          , "backbone-extentions/view-utilities" :: String                             
+                          ]
+    moduleFunction <- function reagentIconView
+    define `apply` (requireArray, moduleFunction)
 
 ------------------------------------------------------------------------------
-reagentIconView :: (JSObject, JSObject, JSObject, JSString, JSObject, JSObject) -> JS t (JSBackboneView NotRendered)
-reagentIconView (backbone, templateRenderer, _model, template, _, _) = do
-  reagentView     <- viewObject
-  eventsMap       <- newMap
-  onClickCallback <- iconClicked reagentView
-  bindings        <- templateBindings _model
-  renderFunction  <- render' templateRenderer template bindings
+reagentIconView :: (Backbone, JSObject, ReagentModel, JSString, JSObject, JSObject) 
+                -> JS t (JSBackboneView NotRendered)
+reagentIconView (backbone, mustache, _model, template, _, _) = do
+  reagentView        <- viewObject
+  eventsMap          <- newMap
+  onClickCallback    <- iconClicked
+  bindingsFunction   <- templateBindings                        
+  renderFunction     <- render' mustache template
+  initializeFunction <- initialize'
 
   insert ("click" :: JSString) onClickCallback eventsMap
 
-  reagentView # model  := _model
-  reagentView # render := renderFunction
-  reagentView # events := eventsMap
-  (`extend` (backbone ! view)) (obj reagentView)
+  reagentView # events       := eventsMap
+  reagentView # "initialize" := initializeFunction
+  reagentView # "bindings"   := bindingsFunction
+  reagentView # render       := renderFunction
+  extendView backbone (obj reagentView)
 
 ------------------------------------------------------------------------------
-iconClicked :: JSBackboneView a -> JS t (JSFunction () ())
-iconClicked _view =
-  function $ \ _ -> do
-    let _model = _view ! model
-    _view `trigger` ("icon-clicked" :: JSString, _model)
+initialize' :: JS t (JSFunction ReagentModel ())
+initialize' = function $ \reagentModel -> this # model := reagentModel;
 
 ------------------------------------------------------------------------------
-templateBindings :: JSObject -> JS t JSTemplateBindings
-templateBindings _ = newMap
+templateBindings :: JS t (JSFunction ()  TemplateBindings)
+templateBindings = function $ \_ -> do
+  let model' = this ! model
+  bindings  <- new "Object" ()
+  name'     <- name model'
+  imageUrl' <- imageUrl model'
+  
+  bindings # "reagentName"      := name'
+  bindings # "imageUrl"         := imageUrl'
+  bindings # "imageNotFoundUrl" := ("images/reagent-icons/unavailable/imageNotFoundUrl" :: JSString)
+  bindings # "isImageUndefined" := (false :: JSBool);
+  return bindings 
 
 ------------------------------------------------------------------------------
 render' :: JSObject
         -> JSString
-        -> JSMap JSString JSObject
         -> JS t (JSFunction () (JSBackboneView Rendered))
-render' templateRenderer template bindings =  
+render' mustache template =  
   function $ \_ -> do
-    renderTemplate (JSBackboneView this) templateRenderer template bindings
+    bindings <- (this ! "bindings") $$ ()
+    renderTemplate (JSBackboneView this) mustache template bindings
     return $ JSBackboneView this
-           
+
+------------------------------------------------------------------------------
+iconClicked :: JS t (JSFunction () ())
+iconClicked =
+  function $ \ _ ->
+    this `trigger` ("icon-clicked" :: JSString, this ! model :: ReagentModel)

@@ -1,11 +1,11 @@
 define([ 'backbone'
-       , 'models/reagent-model'
+       , '/../reagentModelM.js'
        ],
 
-function(Backbone, ReagentModel){
+function(Backbone, SunroofReagentModel){
   var Reagents = Backbone.Collection.extend({
     url: '/api/reagents',
-    model: ReagentModel
+    model: SunroofReagentModel
   });
 
   return Reagents;

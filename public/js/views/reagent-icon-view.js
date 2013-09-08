@@ -1,11 +1,10 @@
 define([ 'backbone'
-       , 'models/reagent-model'
        , 'text!/../templates/reagent_icon_template.html'
        , 'backbone-extentions/view-utilities'
        , 'bootstrap'
        ],
 
-function(Backbone, ReagentModel, ReagentIconTemplate, ViewUtils){
+function(Backbone, ReagentIconTemplate, ViewUtils){
   var ReagentIconView = Backbone.View.extend({
     
     events : { 'click' : 'iconClicked' }, 
