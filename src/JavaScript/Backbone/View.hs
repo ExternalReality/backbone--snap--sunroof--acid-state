@@ -8,6 +8,8 @@ module JavaScript.Backbone.View ( el
                                 , renderTemplate
                                 , model
                                 , viewObject
+                                , bindings
+                                , initialize
                                 , Rendered
                                 , NotRendered
                                 , JSBackboneView(..)
@@ -20,7 +22,6 @@ import Language.Sunroof.JS.Map
 ------------------------------------------------------------------------------
 import           JavaScript.Mustache hiding (render)
 import qualified JavaScript.Mustache as Mustache
-import           JavaScript.Backbone.Model
 
 ------------------------------------------------------------------------------
 data Rendered
@@ -86,3 +87,11 @@ model = attr "model"
 -- | The events attribute of the view
 events :: SunroofKey a => JSSelector (JSMap a (JSFunction () ()))
 events = attr "events"
+
+------------------------------------------------------------------------------
+bindings :: JSSelector (JSFunction () TemplateBindings)
+bindings = attr "bindings"
+
+------------------------------------------------------------------------------
+initialize :: Sunroof a => JSSelector (JSFunction a ())
+initialize = attr "bindings"

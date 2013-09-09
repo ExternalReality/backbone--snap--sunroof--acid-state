@@ -29,7 +29,7 @@ function(Backbone, ReagentIconTemplate, ViewUtils){
     },
 
     disableImageDragEffect : function(){
-       _.first(this.$('.reagent-icon')).ondragstart = function() { return false; };
+       this.$('img').ondragstart = function() { return false; };
     },
 
     render: function(){

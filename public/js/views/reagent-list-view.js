@@ -8,7 +8,7 @@ function( Backbone
 	, Reagents
 	, ReagentIconView
 	, ReagentsTemplate
-    ){
+        ){
 
   var ReagentListView = Backbone.View.extend({
 
@@ -33,7 +33,7 @@ function( Backbone
       this.$el.html(template);
       this.setElement(template);
 
-      var reagentModels = this.collection.models;
+     var reagentModels = this.collection.models;
 
       var iconViews = _.map(reagentModels, this.toIconView, this);
       _.each(iconViews, function(elem){this.$el.append(elem);}, this);
