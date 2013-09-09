@@ -1,5 +1,5 @@
 define([ 'backbone'
-       , '/../reagentModelM.js'
+       , 'models/reagent-model'
        ],
 
 function(Backbone, SunroofReagentModel){

@@ -1,6 +1,6 @@
 define([ 'backbone'       
-       , '../reagentIconViewM'
-       , '../reagentModelM'
+       , 'views/reagentIconViewM'
+       , 'models/reagent-model'
        ], 
 
 function(Backbone, ReagentIconView, ReagentModel){

@@ -53,7 +53,7 @@ initialize' :: JS t (JSFunction ReagentModel ())
 initialize' = function $ \reagentModel -> this # model := reagentModel;
 
 ------------------------------------------------------------------------------
-templateBindings :: JS t (JSFunction ()  TemplateBindings)
+templateBindings :: JS t (JSFunction () TemplateBindings)
 templateBindings = function $ \_ -> do
   let model' = this ! model
   bindings  <- new "Object" ()

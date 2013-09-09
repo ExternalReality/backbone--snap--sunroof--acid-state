@@ -11,7 +11,8 @@ define([ 'backbone'
        , 'collections/reagents'
        , 'models/mixture'
        , 'views/mixture-view'
-       , '../reagentModelM'
+       , 'models/reagent-model'
+       , 'bootstrap'
        ],
 
 function( Backbone

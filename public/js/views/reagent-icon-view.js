@@ -1,7 +1,6 @@
 define([ 'backbone'
        , 'text!/../templates/reagent_icon_template.html'
        , 'backbone-extentions/view-utilities'
-       , 'bootstrap'
        ],
 
 function(Backbone, ReagentIconTemplate, ViewUtils){

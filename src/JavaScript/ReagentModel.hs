@@ -47,7 +47,7 @@ reagentModelModule = defineModule "ReagentIconViewModule"
 reagentModel :: Backbone -> JS t ReagentModel
 reagentModel backbone = do
   reagent <- new "Object" ()
-  reagent # "url" := ("/api/reagents" :: JSString)  
+  reagent # url := ("/api/reagents" :: JSString)  
   ReagentModel `fmap` extendModel backbone reagent
 
 ------------------------------------------------------------------------------
@@ -61,3 +61,7 @@ imageUrl (ReagentModel m) = get m ("imageUrl" :: JSString)
 ------------------------------------------------------------------------------
 imageNotFoundUrl :: ReagentModel -> JS t JSString
 imageNotFoundUrl (ReagentModel m) = get m ("imageNotFoundUrl" :: JSString)
+
+------------------------------------------------------------------------------
+url :: JSSelector JSString
+url = attr "url"
