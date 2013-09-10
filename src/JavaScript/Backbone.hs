@@ -52,4 +52,4 @@ extendModel backbone ob = fmap JSBackboneModel $ extendObject backbone model ob
 
 ------------------------------------------------------------------------------
 extendView :: Backbone -> JSObject -> JS t (JSBackboneView NotRendered)
-extendView backbone ob = fmap JSBackboneView $ extendObject backbone view ob
+extendView backbone = fmap createJSBackboneView . extendObject backbone view

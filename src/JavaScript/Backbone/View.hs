@@ -7,12 +7,12 @@ module JavaScript.Backbone.View ( el
                                 , render
                                 , renderTemplate
                                 , model
-                                , viewObject
                                 , bindings
                                 , initialize
+                                , createJSBackboneView
                                 , Rendered
                                 , NotRendered
-                                , JSBackboneView(..)
+                                , JSBackboneView
                                 ) where
 
 import Data.Boolean
@@ -28,7 +28,7 @@ data Rendered
 data NotRendered
 
 ------------------------------------------------------------------------------
-newtype JSBackboneView t = JSBackboneView { obj :: JSObject }
+newtype JSBackboneView t = JSBackboneView  JSObject
 
 ------------------------------------------------------------------------------
 instance Show (JSBackboneView t) where
@@ -54,9 +54,8 @@ instance EqB (JSBackboneView t) where
   (JSBackboneView a) ==* (JSBackboneView b) = a ==* b
 
 ------------------------------------------------------------------------------
--- | Create a new backbone js view object
-viewObject :: JS t (JSBackboneView NotRendered)
-viewObject = JSBackboneView `fmap` new "Object" () 
+createJSBackboneView :: JSObject -> JSBackboneView NotRendered
+createJSBackboneView = JSBackboneView 
 
 ------------------------------------------------------------------------------
 -- | Get DOM element from a rendered view
@@ -64,10 +63,14 @@ el :: JSBackboneView Rendered -> JSObject
 el _view = _view ! attr "el"
 
 ------------------------------------------------------------------------------
-renderTemplate :: JSBackboneView a -> JSObject -> JSString -> TemplateBindings -> JS t ()
-renderTemplate _view templateRenderer template bindings = do
-  renderedTemplate <- Mustache.render (template, bindings) templateRenderer
-  setElement _view renderedTemplate 
+renderTemplate :: JSBackboneView a
+               -> JSObject 
+               -> JSString 
+               -> TemplateBindings -> JS t (JSBackboneView Rendered)
+renderTemplate _view@(JSBackboneView o) templateRenderer template tBindings = do
+  renderedTemplate <- Mustache.render (template, tBindings) templateRenderer
+  setElement _view renderedTemplate
+  return (JSBackboneView o) 
   
 ------------------------------------------------------------------------------
 setElement :: JSBackboneView a -> JSObject ->  JS t ()
