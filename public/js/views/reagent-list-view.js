@@ -1,5 +1,5 @@
 define([ 'backbone'
-       , 'collections/reagents'
+       , 'collections/reagent-collection'
        , 'views/reagent-icon-view'
        , 'text!/../templates/reagents_table_template.html'
        ],

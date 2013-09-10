@@ -1,6 +1,7 @@
 {-# LANGUAGE TypeFamilies #-}
 module JavaScript.Backbone ( extendModel
                            , extendView
+                           , extendCollection
                            , Backbone
                            ) where
 
@@ -10,6 +11,7 @@ import Language.Sunroof.JS.Bool ( jsIfB )
 ------------------------------------------------------------------------------
 import JavaScript.Backbone.Model
 import JavaScript.Backbone.View hiding (model)
+import JavaScript.Backbone.Collection hiding (model)
 
 ------------------------------------------------------------------------------
 newtype Backbone = Backbone JSObject
@@ -39,8 +41,19 @@ view :: JSSelector JSObject
 view = attr "View"
 
 ------------------------------------------------------------------------------
+collection :: JSSelector JSObject
+collection = attr "Collection"
+
+------------------------------------------------------------------------------
 extend :: JSObject -> JSObject -> JS t JSObject
 extend = invoke "extend"
+
+------------------------------------------------------------------------------
+extendCollection :: Backbone
+                 -> JSObject 
+                 -> JS t JSBackboneCollection
+extendCollection backbone = 
+  fmap JSBackboneCollection . extendObject backbone collection
 
 ------------------------------------------------------------------------------
 extendObject :: Backbone -> JSSelector JSObject -> JSObject -> JS t JSObject

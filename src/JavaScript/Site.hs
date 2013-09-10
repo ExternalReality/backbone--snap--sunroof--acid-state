@@ -9,6 +9,7 @@ import Snap
 ------------------------------------------------------------------------------
 import JavaScript.ReagentIconView
 import JavaScript.ReagentModel
+import JavaScript.ReagentCollection
 
 ------------------------------------------------------------------------------
 writeJavaScriptModule :: IO String -> Handler App App ()
@@ -22,11 +23,16 @@ reagentIconView :: Handler App App ()
 reagentIconView = writeJavaScriptModule reagentIconViewModule
 
 ------------------------------------------------------------------------------
+reagentCollection :: Handler App App ()
+reagentCollection = writeJavaScriptModule reagentCollectionModule
+
+------------------------------------------------------------------------------
 reagentModel :: Handler App App ()
 reagentModel = writeJavaScriptModule reagentModelModule
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
-routes = [ ("js/views/reagent-icon-view.js", reagentIconView)
-         , ("js/models/reagent-model.js",   reagentModel) 
+routes = [ ("js/views/reagent-icon-view.js",     reagentIconView)
+         , ("js/models/reagent-model.js",        reagentModel) 
+         , ("js/collections/reagent-collection.js", reagentCollection)
          ]

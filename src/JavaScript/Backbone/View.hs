@@ -24,6 +24,8 @@ import           JavaScript.Mustache hiding (render)
 import qualified JavaScript.Mustache as Mustache
 
 ------------------------------------------------------------------------------
+-- | Any operation that manipulates the DOM elements associated with
+-- a view must be operate on a `Rendered` view. Thus the phantom type.
 data Rendered
 data NotRendered
 

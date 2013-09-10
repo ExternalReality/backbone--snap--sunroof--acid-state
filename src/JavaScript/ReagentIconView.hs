@@ -84,7 +84,7 @@ render' mustache template =
 iconClicked :: JS t (JSFunction () ())
 iconClicked =
   function $ \ _ ->
-    this `trigger` ("icon-clicked" :: JSString, this ! model :: ReagentModel)
+    this # trigger ("icon-clicked" :: JSString, this ! model :: ReagentModel)
 
 ------------------------------------------------------------------------------
 disableImageDragEffect :: JSBackboneView Rendered -> JS t ()
