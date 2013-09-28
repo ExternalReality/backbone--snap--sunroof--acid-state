@@ -6,7 +6,9 @@ cabal-dev
 *.chi
 *.chs.h
 TAGS
-\.hsenv
+.hsenv
+.cabal-sandbox
+cabal.sandbox.config
 
 #snap
 *.log
