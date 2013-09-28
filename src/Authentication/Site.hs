@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+
 module Authentication.Site where
 
 
@@ -8,6 +9,7 @@ import           Control.Applicative    ((<|>))
 import           Data.ByteString        (ByteString)
 import           Data.Maybe
 import qualified Data.Text              as T
+import           Heist
 import qualified Heist.Interpreted      as I
 import           Snap.Core
 import           Snap.Snaplet
@@ -22,12 +24,12 @@ import           Application
 laboratoryURL :: ByteString
 laboratoryURL = "/#laboratory"
 
-
 ------------------------------------------------------------------------------
-handleLogin :: Maybe T.Text -> Handler App (AuthManager App) ()
+--handleLogin :: Maybe T.Text -> Handler App (AuthManager App) ()
 handleLogin authError = heistLocal (I.bindSplices errs) $ render "login"
   where
-    errs = [("loginError", I.textSplice c) | c <- maybeToList authError]
+    errs = maybe noSplices splice authError
+    splice err = "loginError" ## I.textSplice err
 
 
 ------------------------------------------------------------------------------
@@ -62,7 +64,7 @@ handleNewUser = method GET handleForm <|> method POST handleFormSubmit
              eitherErrorUser <- saveUser $ user { userRoles = [Role role] }
              case eitherErrorUser of
                (Right user) -> do
-                 let id = (fromJust . userId $ user)
+                 let id = fromJust . userId $ user
                  update (CreatePotionMaker id)
                  redirect "/"
                (Left _) -> error ""

@@ -18,7 +18,7 @@ routes = [ ("reagent-icon.css",   css) ]
 css :: Handler App App ()
 css = do
   modifyResponse $ setContentType "text/css; charset=UTF-8"
-  writeLazyText $ renderWith compact [] styles
+  writeLazyText $ renderWith compact styles
   
 ------------------------------------------------------------------------------
 styles :: Css

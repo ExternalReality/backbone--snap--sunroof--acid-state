@@ -36,18 +36,18 @@ deriving instance Typeable Validated
 
 
 deriveSafeCopy 0 'base ''NotValidated
-deriveJSON id ''NotValidated
+deriveJSON defaultOptions ''NotValidated
 
 
 deriveSafeCopy 0 'base ''Validated
-deriveJSON id ''Validated
+deriveJSON defaultOptions ''Validated
 
 ------------------------------------------------------------------------------
 newtype MixtureId = MixtureId { _unMixtureId :: Integer }
       deriving (Eq, Ord, Data, Typeable, Show, Num)
 
 deriveSafeCopy 0 'base ''MixtureId
-deriveJSON id ''MixtureId
+deriveJSON defaultOptions ''MixtureId
 
 ------------------------------------------------------------------------------
 data Mixture a = Mixture { _mixtureId :: Maybe MixtureId

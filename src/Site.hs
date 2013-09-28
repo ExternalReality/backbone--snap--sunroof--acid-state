@@ -45,5 +45,5 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     addRoutes Mixture.routes
     addRoutes Reagent.routes
     addRoutes JavaScript.routes
-    addAuthSplices auth
+    addAuthSplices h auth
     return $ App h s x a
