@@ -23,7 +23,7 @@ reagentIconViewModule :: IO String
 reagentIconViewModule =
   sunroofCompileJSA def "ReagentIconViewModule" $ do
     requireArray <- array [ "backbone"
-                          , "mustache"
+                          , "handlebars"
                           , "models/reagent-model"
                           , "text!/../templates/reagent_icon_template.html"
                           , "backbone-extentions/view-utilities" :: String
@@ -76,9 +76,12 @@ render' mustache template =
   function $ \_ -> do    
     bindings' <- (this ! bindings) $$ ()
     let notRenderedView = createJSBackboneView this
-    renderedView <- renderTemplate notRenderedView mustache template bindings'
+    renderedView <- renderTemplate (template, bindings') notRenderedView
     disableImageDragEffect renderedView
     return renderedView
+
+------------------------------------------------------------------------------
+renderTemplate = invoke "renderTemplate"
 
 ------------------------------------------------------------------------------
 iconClicked :: JS t (JSFunction () ())

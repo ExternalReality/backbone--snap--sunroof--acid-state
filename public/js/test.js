@@ -1,9 +1,10 @@
 require.config({
-  paths: { 'jquery':      'lib/jquery/jquery-2.0.1.min'         
+  paths: { 'jquery':      'lib/jquery/jquery.min'         
          , 'underscore':  'lib/underscore/underscore-min'
          , 'backbone':    'lib/backbone/backbone-min'
-	 , 'rx':          'lib/rxjs/rx.min'
-         , 'mustache':    'lib/mustache/mustache'
+	 , 'rx':          'lib/rxjs/rx'
+         , 'handlebars':  'lib/handlebars/handlebars'
+	 , 'text':        'lib/text/text'
          },
 
   shim: {
@@ -14,7 +15,12 @@ require.config({
 
     'underscore': {
       exports: '_'
+    },
+
+    'handlebars': {
+      exports: 'Handlebars'
     }   
+   
   }
 });
 

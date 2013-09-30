@@ -1,6 +1,7 @@
 define([ 'backbone'       
-       , 'views/reagentIconViewM'
+       , 'views/reagent-icon-view'
        , 'models/reagent-model'
+       , 'backbone-extentions/view-utilities'
        ], 
 
 function(Backbone, ReagentIconView, ReagentModel){
@@ -32,10 +33,9 @@ function(Backbone, ReagentIconView, ReagentModel){
 
 
   function givenAInstanceOfABackboneJSViewGeneratedBySunroof(){
-    reagentModel    = new ReagentModel({ name              : "name",
-				         imageUrl          : "url"
+    reagentModel    = new ReagentModel({ name : "name"				  
 				       });    
-    reagentIconView = new ReagentIconView(reagentModel); 
+    reagentIconView = new ReagentIconView({model: reagentModel}); 
   }
 
   function givenAnInstanceOfABackboneJSModuleGeneratedBySunroof(){

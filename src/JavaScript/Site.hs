@@ -32,7 +32,6 @@ reagentModel = writeJavaScriptModule reagentModelModule
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
-routes = [ ("js/views/reagent-icon-view.js",     reagentIconView)
-         , ("js/models/reagent-model.js",        reagentModel) 
+routes = [ ("js/models/reagent-model.js",           reagentModel) 
          , ("js/collections/reagent-collection.js", reagentCollection)
          ]

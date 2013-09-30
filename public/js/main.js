@@ -3,7 +3,8 @@ require.config({
          , 'underscore':  'lib/underscore/underscore-min'
          , 'backbone':    'lib/backbone/backbone-min'
 	 , 'rx':          'lib/rxjs/rx'
-         , 'mustache':    'lib/mustache/mustache'
+         , 'handlebars':  'lib/handlebars/handlebars'
+	 , 'text':        'lib/text/text'
          },
 
   shim: {
@@ -16,8 +17,8 @@ require.config({
       exports: '_'
     },
 
-    'mustache': {
-	exports: 'Mustache'
+    'handlebars': {
+	exports: 'Handlebars'
     }
   }
 });

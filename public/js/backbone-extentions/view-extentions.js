@@ -1,8 +1,8 @@
 define([ 'backbone'
-       , 'mustache'
+       , 'handlebars'
        ],
 
-function(Backbone,Mustache){
+function(Backbone,Handlebars){
 
   Backbone.View.prototype.rendered = false;
 
@@ -22,7 +22,8 @@ function(Backbone,Mustache){
   };
 
   Backbone.View.prototype.renderTemplate = function(template, bindings){
-    var renderedTemplate = Mustache.render(template, bindings);
+    var renderFunction = Handlebars.compile(template);
+    var renderedTemplate = renderFunction(bindings);
     $(this.el).html(renderedTemplate);
     this.setElement(renderedTemplate);
     this.rendered = true; 	
