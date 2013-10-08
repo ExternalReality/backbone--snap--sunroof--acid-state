@@ -17,5 +17,8 @@ createPotionMaker userId = do
   let potionMaker = PotionMaker userId S.empty
   potionMakers %= updateIx userId potionMaker
                   
-
 ------------------------------------------------------------------------------
+take' :: Int -> [a] -> [a]
+take' _ []                 = []
+take' n (x:xs) | (n <= 0)  = []
+               | otherwise = x : take' (n-1) (xs)

@@ -25,7 +25,7 @@ laboratoryURL :: ByteString
 laboratoryURL = "/#laboratory"
 
 ------------------------------------------------------------------------------
---handleLogin :: Maybe T.Text -> Handler App (AuthManager App) ()
+handleLogin :: Maybe T.Text -> Handler App (AuthManager App) ()
 handleLogin authError = heistLocal (I.bindSplices errs) $ render "login"
   where
     errs = maybe noSplices splice authError
@@ -41,11 +41,15 @@ handleLoginSubmit =
   where
     err = Just "Unknown Username or Password"
 
+------------------------------------------------------------------------------
+handleSocialLoginSubmit :: Handler App (AuthManager App) ()
+handleSocialLoginSubmit = do
+  params <- getPostParams
+  writeText $ T.pack $  show params
 
 ------------------------------------------------------------------------------
 handleLogout :: Handler App (AuthManager App) ()
 handleLogout = logout >> redirect "/login"
-
 
 ------------------------------------------------------------------------------
 handleNewUser :: Handler App (AuthManager App) ()
@@ -74,6 +78,7 @@ handleNewUser = method GET handleForm <|> method POST handleFormSubmit
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
 routes = [ ("/login"        , with auth (handleLogin Nothing))
+         , ("/social_login_submit" , with auth (handleSocialLoginSubmit))
          , ("/login_submit" , with auth handleLoginSubmit)
          , ("/logout"       , with auth handleLogout)
          , ("/new_user"     , with auth handleNewUser)

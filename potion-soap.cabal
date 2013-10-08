@@ -53,6 +53,8 @@ Executable potion-soap
     unordered-containers      == 0.2.*,
     vector                    == 0.10.*,
     xmlhtml                   >= 0.1,
+    io-streams                == 1.1.*,
+    http-streams              == 0.6.*,
 
     -- haskell mode needs these for testing
     HUnit                     == 1.2.5.*,
