@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE RecordWildCards  #-}
 
 module Reagent.ReagentQueries where
 
@@ -30,12 +29,7 @@ newReagent reagent = do
                
 ------------------------------------------------------------------------------
 updateReagent :: Reagent -> Update PotionSoapState ()
-updateReagent reagent = 
-  maybe (return ()) updateReagent' $ _reagentId reagent
-  
-  where
-   updateReagent' = 
-     return $ reagents %= updateIx (_reagentId reagent) reagent 
+updateReagent reagent = reagents %= updateIx (_reagentId reagent) reagent 
                 
 ------------------------------------------------------------------------------
 allReagents :: Query PotionSoapState [Reagent]
@@ -70,3 +64,16 @@ saveReagent reagent = do
   let reagentName =  _name reagent
   reagentState <- use reagents
   reagents .= IxSet.updateIx reagentName reagent reagentState
+
+------------------------------------------------------------------------------
+deleteReagent :: Reagent -> Update PotionSoapState ()
+deleteReagent reagent = do
+  let reagentName =  _name reagent
+  reagentState <- use reagents
+  reagents .= IxSet.deleteIx reagentName reagentState
+
+------------------------------------------------------------------------------
+deleteReagentByName :: ReagentName -> Update PotionSoapState ()
+deleteReagentByName reagentName = do
+  reagentState <- use reagents
+  reagents .= IxSet.deleteIx reagentName reagentState

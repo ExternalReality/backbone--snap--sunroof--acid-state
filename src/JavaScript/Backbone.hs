@@ -8,10 +8,6 @@ module JavaScript.Backbone ( extendModel
 import Data.Boolean
 import Language.Sunroof
 import Language.Sunroof.JS.Bool ( jsIfB )
-------------------------------------------------------------------------------
-import JavaScript.Backbone.Model
-import JavaScript.Backbone.View hiding (model)
-import JavaScript.Backbone.Collection hiding (model)
 
 ------------------------------------------------------------------------------
 newtype Backbone = Backbone JSObject
@@ -51,18 +47,17 @@ extend = invoke "extend"
 ------------------------------------------------------------------------------
 extendCollection :: Backbone
                  -> JSObject 
-                 -> JS t JSBackboneCollection
-extendCollection backbone = 
-  fmap JSBackboneCollection . extendObject backbone collection
+                 -> JS t JSObject
+extendCollection backbone =  extendObject backbone collection
 
 ------------------------------------------------------------------------------
 extendObject :: Backbone -> JSSelector JSObject -> JSObject -> JS t JSObject
 extendObject backbone klass ob = extend ob (backbone ! klass) 
 
 ------------------------------------------------------------------------------
-extendModel :: Backbone -> JSObject -> JS t JSBackboneModel
-extendModel backbone ob = fmap JSBackboneModel $ extendObject backbone model ob
+extendModel :: Backbone -> JSObject -> JS t JSObject
+extendModel backbone = extendObject backbone model
 
 ------------------------------------------------------------------------------
-extendView :: Backbone -> JSObject -> JS t (JSBackboneView NotRendered)
-extendView backbone = fmap createJSBackboneView . extendObject backbone view
+extendView :: Backbone -> JSObject -> JS t JSObject
+extendView backbone = extendObject backbone view

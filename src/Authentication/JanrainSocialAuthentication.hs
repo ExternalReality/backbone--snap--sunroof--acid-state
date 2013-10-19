@@ -1,2 +1,0 @@
-module Authentication.JanrainSocial () where
-  

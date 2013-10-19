@@ -44,11 +44,11 @@ reagentModelModule = defineModule "ReagentIconViewModule"
     moduleDependencies = ["backbone"]
 
 ------------------------------------------------------------------------------
-reagentModel :: Backbone -> JS t ReagentModel
+reagentModel :: Backbone -> JS t JSObject
 reagentModel backbone = do
   reagent <- new "Object" ()
   reagent # url := ("/api/reagents" :: JSString)  
-  ReagentModel `fmap` extendModel backbone reagent
+  extendModel backbone reagent
 
 ------------------------------------------------------------------------------
 name :: ReagentModel -> JS t JSString

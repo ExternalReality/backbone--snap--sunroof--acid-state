@@ -48,6 +48,7 @@ makeAcidic ''PotionSoapState ['allReagents
                              ,'reagentById
                              ,'reagentByName
                              ,'updateReagent
+                             ,'deleteReagent
                              ,'createPotionMaker
                              ,'saveMixture
                              ,'potionMakersMixtures

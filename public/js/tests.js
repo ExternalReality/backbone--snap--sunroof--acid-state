@@ -7,6 +7,7 @@ define([ 'backbone'
 function(Backbone, ReagentIconView, ReagentModel){
   var reagentIconView = null;
   var reagentModel = null;
+  QUnit.config.reorder = false;  
 
   test( "ReagentIconView should contain an 'events' object", function() {
     givenAInstanceOfABackboneJSViewGeneratedBySunroof();
@@ -20,7 +21,7 @@ function(Backbone, ReagentIconView, ReagentModel){
     andTheEventsAttributeShouldBeAJavascriptFunction();
   });
     
-  test( "ReagentIconView should be able to render its element", function() {
+  test( "ReagentIconView should be able to render its element", function(){
     givenAInstanceOfABackboneJSViewGeneratedBySunroof();
     whenTheInstanceIsRendered();
     thenItsElementShouldBeSet();
@@ -31,10 +32,8 @@ function(Backbone, ReagentIconView, ReagentModel){
     thenTheModelShouldContainASaveAttribute();
   });
 
-
   function givenAInstanceOfABackboneJSViewGeneratedBySunroof(){
-    reagentModel    = new ReagentModel({ name : "name"				  
-				       });    
+    reagentModel    = new ReagentModel({ name : "name" });    
     reagentIconView = new ReagentIconView({model: reagentModel}); 
   }
 
@@ -61,7 +60,6 @@ function(Backbone, ReagentIconView, ReagentModel){
   function thenTheInstanceShouldContainAnAttributeWithTheKeyEvents(){
     ok( reagentIconView["events"] != undefined, "events attribute should be defined");
   }
-
   
   function thenItsElementShouldBeSet(){
     var element = reagentIconView.el;

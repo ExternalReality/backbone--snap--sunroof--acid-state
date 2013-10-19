@@ -24,14 +24,14 @@ import qualified Reagent.Site                                as Reagent
 
 ------------------------------------------------------------------------------
 routes :: [(ByteString, Handler App App ())]
-routes = [ (""      , serveDirectoryWith fancyDirectoryConfig "public")
+routes = [ (""      , serveDirectory "public")
          , ("tests" , serveFile "public/templates/tests.html")
-         , ("icons", serveDirectory "public/images/icons")
+         , ("icons" , serveDirectory "public/images/icons")
          ]
 
 ------------------------------------------------------------------------------
 app :: SnapletInit App App
-app = makeSnaplet "app" "An snaplet example application." Nothing $ do
+app = makeSnaplet "app" "Custom Organic Soap" Nothing $ do
     h <- nestSnaplet "" heist $ heistInit "templates"
     s <- nestSnaplet "sess" sess $
          initCookieSessionManager "site_key.txt" "sess" (Just 3600)

@@ -23,7 +23,6 @@ reagentIconViewModule :: IO String
 reagentIconViewModule =
   sunroofCompileJSA def "ReagentIconViewModule" $ do
     requireArray <- array [ "backbone"
-                          , "handlebars"
                           , "models/reagent-model"
                           , "text!/../templates/reagent_icon_template.html"
                           , "backbone-extentions/view-utilities" :: String
@@ -32,14 +31,14 @@ reagentIconViewModule =
     define `apply` (requireArray, moduleFunction)
 
 ------------------------------------------------------------------------------
-reagentIconView :: (Backbone, JSObject, ReagentModel, JSString, JSObject, JSObject)
-                -> JS t (JSBackboneView NotRendered)
-reagentIconView (backbone, mustache, _model, template, _, _) = do
+reagentIconView :: (Backbone, ReagentModel, JSString, JSObject, JSObject)
+                -> JS t JSObject
+reagentIconView (backbone, _model, template, _, _) = do
   reagentView        <- new "Object" () 
   eventsMap          <- newMap
   onClickCallback    <- iconClicked
   bindingsFunction   <- templateBindings
-  renderFunction     <- render' mustache template
+  renderFunction     <- render' template
   initializeFunction <- initialize'
 
   insert ("click" :: JSString) onClickCallback eventsMap
@@ -58,9 +57,9 @@ initialize' = function $ \reagentModel -> this # model := reagentModel;
 templateBindings :: JS t (JSFunction () TemplateBindings)
 templateBindings = function $ \_ -> do
   let model' = this ! model
-  bindings'   <- new "Object" ()
-  name'       <- name model'
-  imageUrl'   <- imageUrl model'
+  bindings'  <- new "Object" ()
+  name'      <- name model'
+  imageUrl'  <- imageUrl model'
 
   bindings' # "reagentName"      := name'
   bindings' # "imageUrl"         := imageUrl'
@@ -69,18 +68,20 @@ templateBindings = function $ \_ -> do
   return bindings'
 
 ------------------------------------------------------------------------------
-render' :: JSObject
-        -> JSString
+render' :: JSString
         -> JS t (JSFunction () (JSBackboneView Rendered))
-render' mustache template =
+render' template =
   function $ \_ -> do    
     bindings' <- (this ! bindings) $$ ()
     let notRenderedView = createJSBackboneView this
     renderedView <- renderTemplate (template, bindings') notRenderedView
-    disableImageDragEffect renderedView
+    disableImageDragEffect
     return renderedView
 
 ------------------------------------------------------------------------------
+renderTemplate :: (JSString, TemplateBindings)
+               -> JSBackboneView NotRendered 
+               -> JS t (JSBackboneView Rendered)
 renderTemplate = invoke "renderTemplate"
 
 ------------------------------------------------------------------------------
@@ -90,15 +91,15 @@ iconClicked =
     this # trigger ("icon-clicked" :: JSString, this ! model :: ReagentModel)
 
 ------------------------------------------------------------------------------
-disableImageDragEffect :: JSBackboneView Rendered -> JS t ()
-disableImageDragEffect ob = do 
+disableImageDragEffect :: JS t ()
+disableImageDragEffect = do 
   disableFunction <- function $ \ _ -> return false
-  em  <- ob # select "img"
+  em  <- this # select "img"
   let em' = (em ! index 0) :: JSObject 
   em' # onDragStart := disableFunction
 
 ------------------------------------------------------------------------------
-select :: JSString -> JSBackboneView Rendered ->  JS t JSObject
+select :: JSString -> JSObject  ->  JS t JSObject
 select = invoke "$"
 
 ------------------------------------------------------------------------------

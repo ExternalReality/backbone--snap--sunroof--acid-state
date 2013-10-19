@@ -1,6 +1,6 @@
 define([ 'backbone'
        , 'collections/reagent-collection'
-       , 'views/reagent-icon-view'
+       , 'foo'
        , 'text!/../templates/reagents_table_template.html'
        ],
 
@@ -43,8 +43,8 @@ function( Backbone
     toIconView : function(reagent) {
       var reagentIconView = new ReagentIconView({model : reagent});
       this.listenTo(reagentIconView, "icon-clicked", this.iconClicked);
-      var reagentIconHtmlElement = reagentIconView.render().el;
-      return reagentIconHtmlElement;
+      reagentIconView.render();
+      return reagentIconView.el;
     }
 
   });

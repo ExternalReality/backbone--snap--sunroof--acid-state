@@ -40,9 +40,9 @@ reagentCollectionModule = defineModule "ReagentCollectionModule"
                          ]
 
 ------------------------------------------------------------------------------
-reagentCollection :: (Backbone, ReagentModel) -> JS t ReagentCollection
+reagentCollection :: (Backbone, ReagentModel) -> JS t JSObject
 reagentCollection (backbone, reagentModel) = do 
   collection <- new "Object" ()
   collection # url   := ("/api/reagents" :: JSString)
   collection # model := reagentModel
-  ReagentCollection `fmap` extendCollection backbone collection
+  extendCollection backbone collection

@@ -12,7 +12,7 @@ module Authentication.AcidStateBackend
 
 import           Control.Exception hiding (Handler)
 import           Data.Acid
-import           Data.Aeson (Value)
+import           Data.Aeson (Value(String))
 import           Data.Attoparsec.Number (Number)
 import           Control.Lens
 import qualified Data.HashMap.Strict as H
@@ -34,13 +34,15 @@ import           System.FilePath ((</>))
 ------------------------------------------------------------------------------
 type UserLogin = Text
 type RToken    = Text
+type SToken    = Text 
 
 ------------------------------------------------------------------------------
 data UserStore = UserStore
-                   { _users      :: H.HashMap UserId AuthUser
-                   , _loginIndex :: H.HashMap UserLogin UserId
-                   , _tokenIndex :: H.HashMap RToken UserId
-                   , _nextUserId :: Int
+                   { _users       :: H.HashMap UserId AuthUser
+                   , _loginIndex  :: H.HashMap UserLogin UserId
+                   , _tokenIndex  :: H.HashMap RToken UserId
+                   , _socialIndex :: H.HashMap SToken UserId          
+                   , _nextUserId  :: Int
                    } deriving (Typeable)
 
 makeLenses ''UserStore
@@ -58,10 +60,8 @@ instance (SafeCopy a) => SafeCopy (V.Vector a) where
       getCopy = contain $ fmap V.fromList safeGet
       putCopy = contain . safePut . V.toList
 
-
 ------------------------------------------------------------------------------
 deriving instance Typeable AuthUser
-
 
 ------------------------------------------------------------------------------
 $(deriveSafeCopy 0 'base ''Number)
@@ -73,11 +73,9 @@ $(deriveSafeCopy 0 'base ''AuthUser)
 $(deriveSafeCopy 0 'base ''UserId)
 $(deriveSafeCopy 0 'base ''UserStore)
 
-
 ------------------------------------------------------------------------------
 emptyUS :: UserStore
-emptyUS = UserStore H.empty H.empty H.empty 0
-
+emptyUS = UserStore H.empty H.empty H.empty H.empty 0
 
 ------------------------------------------------------------------------------
 saveAuthUser :: AuthUser
@@ -88,7 +86,6 @@ saveAuthUser user utcTime = do
   case authUserId of
     Just uid -> saveExistingUser user uid utcTime
     Nothing  -> saveNewUser user utcTime
-
 
 ------------------------------------------------------------------------------
 saveNewUser :: AuthUser
@@ -105,8 +102,8 @@ saveNewUser user currentTime = do
       updateUserCache user' uid
       updateLoginCache (userLogin user') uid
       updateTokenCache (userRememberToken user) uid
+      updateSocialTokenCache (userSocialToken user) uid
       return $ Right user'
-
 
 ------------------------------------------------------------------------------
 saveExistingUser :: AuthUser
@@ -129,30 +126,30 @@ saveExistingUser user uId currentTime = do
        updateLoginCache (userLogin user') uId
        updateTokenCache (userRememberToken user) uId
 
-
        return $ Right user
-
 
 ------------------------------------------------------------------------------
 deleteIfJust :: (Hashable a, Eq a) => Maybe a -> H.HashMap a b -> H.HashMap a b
 deleteIfJust (Just val) hash = H.delete val hash
 deleteIfJust Nothing hash    = hash
 
-
 ------------------------------------------------------------------------------
 updateUserCache :: (MonadState UserStore m) => AuthUser -> UserId ->  m ()
 updateUserCache user uid = users %= H.insert uid user
-
 
 ------------------------------------------------------------------------------
 updateLoginCache :: (MonadState UserStore m) => Text-> UserId ->  m ()
 updateLoginCache login uid = loginIndex %= H.insert login uid
 
-
 ------------------------------------------------------------------------------
 updateTokenCache :: (MonadState UserStore m) => Maybe Text -> UserId ->  m ()
 updateTokenCache (Just token) uid = tokenIndex %= H.insert token uid
 updateTokenCache Nothing _        = return ()
+
+------------------------------------------------------------------------------
+updateSocialTokenCache :: (MonadState UserStore m) => Maybe SToken -> UserId ->  m ()
+updateSocialTokenCache (Just sToken) uid = socialIndex %= H.insert sToken uid
+updateSocialTokenCache Nothing _        = return ()
 
 
 ------------------------------------------------------------------------------
@@ -161,13 +158,11 @@ byUserId uid = do
     us <- view users
     return $ H.lookup uid us
 
-
 ------------------------------------------------------------------------------
 byLogin :: UserLogin -> Query UserStore (Maybe AuthUser)
 byLogin l = do
     li <- view loginIndex
     maybe (return Nothing) byUserId $ H.lookup l li
-
 
 ------------------------------------------------------------------------------
 byRememberToken :: RToken -> Query UserStore (Maybe AuthUser)
@@ -175,28 +170,36 @@ byRememberToken tok = do
     ti <- view tokenIndex
     maybe (return Nothing) byUserId $ H.lookup tok ti
 
-
 ------------------------------------------------------------------------------
 destroyU :: AuthUser -> Update UserStore ()
 destroyU authUser =
     case userId authUser of
       Nothing  -> return ()
       Just uid -> do
-          UserStore us li ti n <- get
+          UserStore us li ti si n <- get
           storedUser <- runQuery $ byUserId uid
           let li' = fromMaybe li $
                   H.delete . userLogin <$> storedUser <*> pure li
               ti' = fromMaybe ti $
                   H.delete <$> (userRememberToken =<< storedUser) <*> pure ti
-          put $ UserStore (H.delete uid us) li' ti' n
+              si' = fromMaybe si $
+                  H.delete <$> (userSocialToken =<< storedUser) <*> pure si
+          put $ UserStore (H.delete uid us) li' ti' si'  n
 
+------------------------------------------------------------------------------
+userSocialToken :: AuthUser -> Maybe SToken
+userSocialToken user = do
+  let metadata = userMeta user
+  maybeValue <- H.lookup "social token" metadata
+  case maybeValue of
+    (String socialToken) -> return socialToken
+    _                    -> Nothing
 
 ------------------------------------------------------------------------------
 allLogins :: Query UserStore [UserLogin]
 allLogins = do
     li <- view loginIndex
     return $ H.keys li
-
 
 ------------------------------------------------------------------------------
 $(makeAcidic ''UserStore [ 'saveAuthUser
@@ -207,7 +210,6 @@ $(makeAcidic ''UserStore [ 'saveAuthUser
                          , 'allLogins
                          ] )
 
-
 ------------------------------------------------------------------------------
 instance IAuthBackend (AcidState UserStore) where
     save                           = acidSave
@@ -216,7 +218,6 @@ instance IAuthBackend (AcidState UserStore) where
     lookupByRememberToken acid tok = query  acid $ ByRememberToken tok
     destroy acid authUser          = update acid $ DestroyU authUser
 
-
 ------------------------------------------------------------------------------
 acidSave :: AcidState UserStore 
          -> AuthUser 
@@ -224,7 +225,6 @@ acidSave :: AcidState UserStore
 acidSave acid user = do
     currentTime <- getCurrentTime
     update acid $ SaveAuthUser user currentTime
-
 
 ------------------------------------------------------------------------------
 initAcidAuthManager :: AuthSettings
@@ -252,7 +252,6 @@ initAcidAuthManager s lns =
                    , randomNumberGenerator = rng
                    }
 
-
 ------------------------------------------------------------------------------
 removeResourceLockOnUnload :: Initializer b v ()
 removeResourceLockOnUnload = do
@@ -260,14 +259,12 @@ removeResourceLockOnUnload = do
   let resourceLockPath = snapletFilePath </> "open.lock"
   onUnload $ removeIfExists resourceLockPath
 
-
 ------------------------------------------------------------------------------
 removeIfExists :: FilePath -> IO ()
 removeIfExists fileName = removeFile fileName `catch` handleExists
   where handleExists e
           | isDoesNotExistError e = return ()
           | otherwise = throwIO e
-
 
 ------------------------------------------------------------------------------
 getAllLogins :: AcidState UserStore -> Handler b (AuthManager v) [Text]

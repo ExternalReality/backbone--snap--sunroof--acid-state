@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -12,12 +12,16 @@ import Control.Applicative
 import Control.Lens (makeLenses)
 import Control.Monad (mzero)
 import Data.Aeson
+import Data.Boolean
+import Data.ByteString.Lazy.Char8 (unpack)
 import Data.Data
 import Data.IxSet
 import Data.Maybe
 import Data.SafeCopy
-import Data.Text hiding (drop)
-
+import Data.Text hiding (drop, unpack)
+import Language.Sunroof hiding (object)
+import Language.Sunroof.JS.Bool (jsIfB)
+import Language.Sunroof.JavaScript (literal)
 
 ------------------------------------------------------------------------------
 newtype ReagentId = ReagentId { _unReagentId :: Integer }
@@ -25,13 +29,11 @@ newtype ReagentId = ReagentId { _unReagentId :: Integer }
 
 makeLenses ''ReagentId
 
-
 ------------------------------------------------------------------------------
 newtype ReagentName = ReagentName { _unReagentName :: Text }
   deriving (Eq, Ord, Data, Typeable, SafeCopy, Show)
 
 makeLenses ''ReagentName
-
 
 ------------------------------------------------------------------------------
 newtype ImageUrl = ImageUrl { _unImageUrl :: Text }
@@ -39,20 +41,17 @@ newtype ImageUrl = ImageUrl { _unImageUrl :: Text }
 
 makeLenses ''ImageUrl
 
-
 ------------------------------------------------------------------------------
 newtype ShortDescription = ShortDescription { _unShortDescription :: Text }
   deriving (Eq, Ord, Data, Typeable, SafeCopy, Show)
 
 makeLenses ''ShortDescription
 
-
 ------------------------------------------------------------------------------
 newtype LongDescription = LongDescription { _unLongDescription :: Text }
   deriving (Eq, Ord, Data, Typeable, SafeCopy, Show)
 
 makeLenses ''LongDescription
-
 
 ------------------------------------------------------------------------------
 data Reagent = Reagent { _reagentId        :: Maybe ReagentId
@@ -66,20 +65,42 @@ data Reagent = Reagent { _reagentId        :: Maybe ReagentId
 makeLenses ''Reagent
 deriveSafeCopy 0 'base ''Reagent
 
+------------------------------------------------------------------------------
+newtype JSReagent = JSReagent JSObject
+
+------------------------------------------------------------------------------
+instance  Show JSReagent where
+  show (JSReagent o) = show o
+
+------------------------------------------------------------------------------
+instance Sunroof JSReagent where
+  unbox (JSReagent o) = unbox o
+  box o = JSReagent (box o)
+
+------------------------------------------------------------------------------
+instance IfB JSReagent where
+  ifB = jsIfB
+
+------------------------------------------------------------------------------
+type instance BooleanOf JSReagent = JSBool
+
+------------------------------------------------------------------------------
+instance SunroofValue Reagent where
+  type ValueOf Reagent = JSReagent
+  js = box . literal . unpack . encode
 
 ------------------------------------------------------------------------------
 instance ToJSON Reagent where
-  toJSON Reagent{..} =  
+  toJSON Reagent{..} =
     object [ "id"               .= _unReagentId idOrUnSavedId
            , "name"             .= _unReagentName _name
            , "imageUrl"         .= _unImageUrl _imageUrl
            , "shortDescription" .= _unShortDescription _shortDescription
            , "longDescription"  .= _unLongDescription _longDescription
-           ] 
+           ]
     where
       idOrUnSavedId = fromMaybe (ReagentId (-1)) _reagentId
- 
-                                
+
 ------------------------------------------------------------------------------
 instance FromJSON Reagent where
   parseJSON (Object v) =
@@ -88,9 +109,8 @@ instance FromJSON Reagent where
             <*> (ImageUrl         <$> v .:  "imageUrl")
             <*> (ShortDescription <$> v .:  "shortDescription")
             <*> (LongDescription  <$> v .:  "longDescription")
-    
-  parseJSON _ = mzero
 
+  parseJSON _ = mzero
 
 ------------------------------------------------------------------------------
 instance Indexable Reagent where
