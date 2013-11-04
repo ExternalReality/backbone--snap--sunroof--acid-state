@@ -17,7 +17,7 @@ import Mixture hiding (_reagents)
 data PotionSoapState = PotionSoapState { _nextReagentId :: ReagentId
                                        , _nextMixtureId :: MixtureId
                                        , _reagents      :: IxSet Reagent
-                                       , _mixtures      :: IxSet (Mixture Validated)
+                                       , _mixtures      :: IxSet Mixture
                                        , _potionMakers  :: IxSet PotionMaker
                                        }
                        deriving (Data, Typeable)

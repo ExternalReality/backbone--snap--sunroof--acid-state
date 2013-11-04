@@ -12,6 +12,7 @@ import Control.Applicative
 import Control.Lens (makeLenses)
 import Control.Monad (mzero)
 import Data.Aeson
+import Data.Aeson.TH
 import Data.Boolean
 import Data.ByteString.Lazy.Char8 (unpack)
 import Data.Data

@@ -2,34 +2,40 @@
 
 module Mixture.Site where
 
-import           Control.Monad          (liftM)
-import           Data.Aeson
-import           Data.ByteString        (ByteString)
-import           Data.Set
-import           Snap.Core
-import           Snap.Snaplet
-import           Snap.Snaplet.AcidState
-import           Snap.Snaplet.Auth
+import Control.Monad          (liftM)
+import Control.Monad.Trans
+import Data.Aeson
+import Data.ByteString        (ByteString)
+import Data.Set
+import Prelude hiding (null)
+import Snap.Core
+import Snap.Snaplet
+import Snap.Snaplet.AcidState
+import Snap.Snaplet.Auth
 ------------------------------------------------------------------------------
-import           Application
+import Application
+import Mixture
+import Reagent
 
 ------------------------------------------------------------------------------
 saveMixture :: Handler App (AuthManager App) ()
 saveMixture = method PUT $ do
-  maybeMixture <- liftM decode $ readRequestBody 2048
-  case maybeMixture of
-    (Just mixture) -> do
-      eitherErrorMixture <- query $ ValidateMixture mixture
-      case eitherErrorMixture of
-        (Right validMixture) -> saveMixtureForCurrentUser validMixture
-        (Left e)             -> modifyResponse $ setResponseStatus 400 e
-    Nothing -> modifyResponse $ setResponseStatus 400 "Invalid Data"
-
+  maybeByteString <-  getParam "reagents"
+  let maybeReagentIds = decodeStrict =<< maybeByteString
+  case maybeReagentIds of
+    (Just reagentIds) -> do
+      reagents <- query $ FindReagents reagentIds
+      if null reagents
+        then modifyResponse $ setResponseStatus 400 "invalid reagent id"
+        else saveMixtureForCurrentUser reagents
+    Nothing    -> modifyResponse $ setResponseStatus 500 "Invalid Request"
+   
   where
-    saveMixtureForCurrentUser mixture = do
+    saveMixtureForCurrentUser :: Set Reagent -> Handler App (AuthManager App) ()
+    saveMixtureForCurrentUser reagents = do
       maybeUserId <- liftM (userId =<<) currentUser
       case maybeUserId of
-        (Just uId) -> update $ SaveMixture mixture uId
+        (Just uId) -> update $ SaveMixture (Mixture (Just (-1)) reagents) uId
         Nothing    -> modifyResponse $ setResponseStatus 500 "Invalid Request"
 
 

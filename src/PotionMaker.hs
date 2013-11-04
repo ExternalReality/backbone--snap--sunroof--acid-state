@@ -25,7 +25,7 @@ deriving instance Data PotionMakerId
 
 ------------------------------------------------------------------------------
 data PotionMaker = PotionMaker { _potionMakerId :: PotionMakerId               
-                               , _mixtures      :: Set (Mixture Validated)
+                               , _mixtures      :: Set Mixture
                                }
       deriving (Eq, Ord, Typeable, Data, Show)
      

@@ -2,16 +2,18 @@
 
 module Reagent.ReagentQueries where
 
-import Control.Lens
-import Control.Monad
+import           Control.Lens
+import           Control.Monad
 
-import Control.Monad.State
-import Data.Acid
-import Data.IxSet as IxSet
-import Data.Maybe (isJust)
+import           Control.Monad.State
+import           Data.Acid
+import           Data.IxSet as IxSet 
+import           Data.Maybe (isJust)  
+import           Data.Set hiding (toList)
 ------------------------------------------------------------------------------
-import PotionSoap
-import Reagent
+import           PotionSoap
+import qualified PotionSoap as PS
+import           Reagent
 
 ------------------------------------------------------------------------------
 newReagent :: Reagent -> Update PotionSoapState Bool
@@ -52,7 +54,7 @@ incrementNextReagentId :: (MonadState PotionSoapState m) => m ()
 incrementNextReagentId = nextReagentId.unReagentId += 1
 
 ------------------------------------------------------------------------------
-createReagent :: (MonadState PotionSoapState m) => Reagent                                                
+createReagent :: (MonadState PotionSoapState m) => Reagent            
                                                 -> m Reagent
 createReagent reagent = do
   nextId <- use nextReagentId
@@ -77,3 +79,10 @@ deleteReagentByName :: ReagentName -> Update PotionSoapState ()
 deleteReagentByName reagentName = do
   reagentState <- use reagents
   reagents .= IxSet.deleteIx reagentName reagentState
+
+
+------------------------------------------------------------------------------
+findReagents :: [ReagentId] -> Query PotionSoapState (Set Reagent)
+findReagents reagentIds = do
+  knownReagents <- view PS.reagents
+  return $ toSet $ knownReagents @* reagentIds
